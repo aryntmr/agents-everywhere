@@ -34,10 +34,15 @@ const ALIASES: Record<string, string[]> = {
 
 const norm = (s: unknown) => String(s ?? '').trim().toLowerCase().replace(/[_\s-]+/g, ' ');
 
+// norm() turns "cert_expires" into "cert expires", so the alias lists have to be
+// normalized too or the underscored spellings never match and the answer is
+// silently dropped.
+const BY_ALIAS = new Map<string, string>(
+  Object.entries(ALIASES).flatMap(([canon, aliases]) => [canon, ...aliases].map((a) => [norm(a), canon] as const)),
+);
+
 function canonicalKey(k: unknown): string | null {
-  const n = norm(k);
-  for (const [canon, aliases] of Object.entries(ALIASES)) if (aliases.includes(n)) return canon;
-  return null;
+  return BY_ALIAS.get(norm(k)) ?? null;
 }
 
 /** Demo inboxes are Gmail plus-addresses on one account; fixtures carry a placeholder. */
@@ -212,37 +217,52 @@ async function hiringRules(): Promise<string> {
 }
 
 /** Facts checked in code, handed to the model so it cannot contradict them. */
-function precheck(a: Application): { facts: string[]; forced: 'hold' | null } {
+type Forced = 'hold' | 'owner_review' | null;
+
+/** A hold is a rule that is definitely not met; owner_review is a rule we cannot check. */
+function stricter(a: Forced, b: Forced): Forced {
+  if (a === 'hold' || b === 'hold') return 'hold';
+  return a ?? b;
+}
+
+function precheck(a: Application): { facts: string[]; forced: Forced } {
   const facts: string[] = [];
-  let forced: 'hold' | null = null;
+  let forced: Forced = null;
   const hasCert = a.cert_type === 'HHA' || a.cert_type === 'CNA';
   const expired = Boolean(a.cert_expires) && a.cert_expires < localDate(new Date());
+  // A certificate with no readable expiry date is not evidence of a current one.
+  const unverifiable = hasCert && !/^\d{4}-\d{2}-\d{2}$/.test(a.cert_expires);
+  const certOk = hasCert && !expired && !unverifiable;
 
   if (!hasCert) facts.push('No HHA or CNA certificate listed.');
   else if (expired) {
     facts.push(`${a.cert_type} certificate expired on ${a.cert_expires}.`);
     forced = 'hold';
-  } else facts.push(`${a.cert_type} certificate valid until ${a.cert_expires || 'an unstated date'}.`);
+  } else if (unverifiable) {
+    facts.push(`${a.cert_type} certificate claimed but no expiry date given, so we cannot confirm it is current.`);
+  } else facts.push(`${a.cert_type} certificate valid until ${a.cert_expires}.`);
 
   facts.push(`${a.years_experience} year${a.years_experience === 1 ? '' : 's'} of paid caregiving experience.`);
 
   if (!a.zip.startsWith('941')) {
     facts.push(`Zip ${a.zip || '(blank)'} is outside San Francisco (941xx).`);
-    forced = 'hold';
+    forced = stricter(forced, 'hold');
   } else facts.push(`Zip ${a.zip} is in San Francisco.`);
 
   if (!a.availability) {
     facts.push('No availability given.');
-    forced = 'hold';
+    forced = stricter(forced, 'hold');
   }
-  if (!hasCert && a.years_experience < 1 && !forced) forced = 'hold';
+  // Neither route to a clear yes is satisfied. If the only thing missing is a
+  // date we could not read, that is the owner's call, not a hold.
+  if (!certOk && a.years_experience < 1) forced = stricter(forced, unverifiable ? 'owner_review' : 'hold');
   return { facts, forced };
 }
 
 /** No model key yet (Adamay is chasing one) — rules-only stand-in so the spine runs. */
-function fallbackScreening(a: Application, facts: string[], forced: 'hold' | null): Screening {
+function fallbackScreening(a: Application, facts: string[], forced: Forced): Screening {
   const hasCert = (a.cert_type === 'HHA' || a.cert_type === 'CNA') && (!a.cert_expires || a.cert_expires >= localDate(new Date()));
-  const decision: Screening['decision'] = forced ? 'hold' : hasCert || a.years_experience >= 1 ? 'advance' : 'owner_review';
+  const decision: Screening['decision'] = forced ?? (hasCert || a.years_experience >= 1 ? 'advance' : 'owner_review');
   const first = a.name.split(' ')[0] || 'there';
   return {
     decision,
@@ -264,7 +284,9 @@ export async function screen(a: Application): Promise<Screening> {
     ``,
     `Facts already checked in code (do not contradict these):`,
     ...facts.map((f) => `- ${f}`),
-    forced ? `\nThese facts mean the decision cannot be 'advance'.` : '',
+    forced === 'hold' ? `\nThese facts mean the decision cannot be 'advance'.`
+      : forced === 'owner_review' ? `\nA rule here cannot be checked from the application alone, so this is not a clear yes and the decision cannot be 'advance'.`
+      : '',
   ].join('\n');
 
   let out: Screening;
@@ -274,7 +296,7 @@ export async function screen(a: Application): Promise<Screening> {
     console.log(`[ravi] llm unavailable (${err?.message ?? err}) — rules-only screening`);
     return fallbackScreening(a, facts, forced);
   }
-  if (forced && out.decision === 'advance') out.decision = 'hold';
+  if (forced && out.decision === 'advance') out.decision = forced;
   if (!['advance', 'hold', 'owner_review'].includes(out.decision)) out.decision = 'owner_review';
   if (!out.reasons?.length) out.reasons = facts.slice(0, 3);
   if (!out.interview_questions?.length) out.interview_questions = fallbackScreening(a, facts, forced).interview_questions;

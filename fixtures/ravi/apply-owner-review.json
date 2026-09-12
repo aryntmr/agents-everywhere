@@ -8,12 +8,15 @@
     "phone": "415-555-0177",
     "zip": "94110",
     "cert_type": "CNA",
-    "cert_expires": "2026-11-15",
-    "years_experience": 1,
-    "skills": ["meds", "transfers"],
+    "cert_expires": "",
+    "years_experience": 0,
+    "skills": [
+      "meds",
+      "transfers"
+    ],
     "languages": "English, Spanish",
-    "availability": "",
+    "availability": "Weekends, and some weekday evenings",
     "has_car": "no",
-    "why": "Left the field in 2019 after an injury, now cleared to work and want to return."
+    "why": "I have my CNA from a course I took a few years ago but I cannot find the card to check the date. I looked after both my parents at home, though never for wages."
   }
 }
