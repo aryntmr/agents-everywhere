@@ -24,12 +24,12 @@
 
 ## Build — lane 1 (Adamay, branch `lane1/foundation`, fast-forward to main at each gate)
 - [x] Skeleton: package.json, tsconfig, `src/types.ts` (frozen)
-- [ ] `src/ambi.ts` pushed to main → GATE 1
+- [x] `src/ambi.ts` pushed to main → GATE 1
 - [ ] Verification checks 2–6 (plan/00 section 8) → post ✅/❌ in chat
-- [ ] Seed containers (calendar, #office, project, pipelines, forms, rulebook) → GATE 2
+- [x] Seed containers (calendar, #office, project, pipelines, forms, rulebook) → GATE 2
 - [ ] Seed 150 contacts + ~70 visit series → GATE 3
-- [ ] `llm.ts`, `people.ts`, `rulebook.ts`, `approvals.ts`
-- [ ] `server.ts` + `registry.ts` + `run.ts`, Ops coworker
+- [x] `llm.ts`, `people.ts`, `rulebook.ts`, `approvals.ts`
+- [x] `server.ts` + `registry.ts` + `run.ts`, Ops coworker
 - [ ] cloudflared tunnel + webhooks → GATE 4
 - [ ] Cara coworker, acceptance test from fixture and live form
 - [ ] `reset.ts`, full run twice from reset → GATE 5

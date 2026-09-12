@@ -408,12 +408,14 @@ async function advance(a: Application, person: people.Person, deal: any, s: Scre
   const first = a.name.split(' ')[0] || 'there';
 
   let event = await existingInterview(title, w);
+  let slotStart: string | undefined;
   if (!event) {
     const slot = await cal.firstGap(AS, [ids.owner_user_id], w.startISO, w.endISO, 30);
     if (!slot) {
       console.log('[ravi] no free 30-minute slot in the next three business days — handing to the owner');
       return ownerReview(a, person, deal, { ...s, note_for_owner: 'No free interview slot in the next three business days. Please pick a time.' });
     }
+    slotStart = slot.start;
     event = await cal.create(AS, {
       calendarId: ids.visits_calendar_id,
       title,
@@ -430,7 +432,8 @@ async function advance(a: Application, person: people.Person, deal: any, s: Scre
       ].join('\n'),
     });
   }
-  const startAt = event.start_at ?? event.start?.dateTime ?? event.start;
+  // The create response may wrap the event; the slot we asked for is the fallback so when() never gets undefined.
+  const startAt = event.start_at ?? event.event?.start_at ?? event.start?.dateTime ?? slotStart ?? event.start;
   const slotLabel = when(startAt);
 
   await moveDeal(deal.id, 'interview_booked');
@@ -696,6 +699,32 @@ export async function certSweep(): Promise<void> {
 
 // ---------------------------------------------------------------------------
 
+// Ops forwards job emails here; free text is not a structured application, so the owner reviews it and we point them at the form.
+async function onApplicationEmail(p: Record<string, unknown>): Promise<void> {
+  const from = String(p.from ?? '');
+  const subject = String(p.subject ?? 'Job inquiry');
+  const summary = String(p.summary ?? subject);
+  const title = `Review job email: ${from}`;
+  if (!(await findTask(title))) {
+    await tasks.create(AS, {
+      title,
+      description: `${summary}\n\nFrom: ${from}\nSubject: ${subject}\n\n${String(p.body ?? '')}`,
+      assigneeId: ids.owner_user_id,
+      projectId: ids.office_project_id,
+      priority: 'medium',
+    });
+  }
+  if (from) {
+    const form = ids.forms?.apply?.public_url;
+    await mail.send(AS, {
+      to: from,
+      subject: subject.toLowerCase().startsWith('re:') ? subject : `Re: ${subject}`,
+      markdown: `Hi there,\n\nThanks for getting in touch about working with us. ${form ? `The quickest way in is our short application: ${form}\n\n` : ''}Someone from the office will get back to you within two days.\n\n${SIGNOFF}`,
+    });
+  }
+  await chat.office(AS, `🙋 Ravi: job email from ${from || 'unknown sender'}, handed to the owner.`);
+}
+
 export const ravi: Coworker = {
   who: AS,
   async handle(event: Event): Promise<void> {
@@ -710,6 +739,7 @@ export const ravi: Coworker = {
         if (event.kind === 'application' && event.payload?.answers) {
           return onApplication({ type: 'form', who: AS, formId: String(event.payload.formId ?? ids.forms?.apply?.id ?? ''), answers: event.payload.answers as Record<string, unknown> });
         }
+        if (event.kind === 'application_email') return onApplicationEmail(event.payload);
         return void console.log(`[ravi] no handler for handoff "${event.kind}" from ${event.from}`);
       default:
         return void console.log(`[ravi] no handler for ${event.type}`);
