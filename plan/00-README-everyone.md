@@ -1,6 +1,6 @@
 # Bayside Home Care — an agency run by AI coworkers inside Ambiguous
 
-**Read this whole file before you open your coding agent. Then read your lane file.**
+**Read this whole file before you open your coding agent. Then read `plan/01-dependency-map.md` (who waits on whom) and your lane file.**
 Everything in here is a decision, not a suggestion. If you want to change one, say it in the team chat first. We have three hours. Merging three people's work at 3:45 PM only works if nobody drifts.
 
 Hard deadline: **4:30 PM PDT today**. Code freeze **3:45 PM**. Video recorded by **4:10 PM**.
