@@ -22,8 +22,18 @@
 - [x] Public repo: https://github.com/aryntmr/agents-everywhere
 - [x] Invite Adamay as collaborator (write) — they need to accept
 
-## Build
-- [ ] Phases go in `implementation_plan.md` once direction is chosen
+## Build — lane 1 (Adamay, branch `lane1/foundation`, fast-forward to main at each gate)
+- [x] Skeleton: package.json, tsconfig, `src/types.ts` (frozen)
+- [ ] `src/ambi.ts` pushed to main → GATE 1
+- [ ] Verification checks 2–6 (plan/00 section 8) → post ✅/❌ in chat
+- [ ] Seed containers (calendar, #office, project, pipelines, forms, rulebook) → GATE 2
+- [ ] Seed 150 contacts + ~70 visit series → GATE 3
+- [ ] `llm.ts`, `people.ts`, `rulebook.ts`, `approvals.ts`
+- [ ] `server.ts` + `registry.ts` + `run.ts`, Ops coworker
+- [ ] cloudflared tunnel + webhooks → GATE 4
+- [ ] Cara coworker, acceptance test from fixture and live form
+- [ ] `reset.ts`, full run twice from reset → GATE 5
+- [ ] README + social post text (3:45)
 
 ## Submit (hard stop 4:30 PM PDT)
 - [ ] Record ≤ 2-min demo (YouTube Unlisted or Loom)
