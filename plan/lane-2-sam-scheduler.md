@@ -1,6 +1,6 @@
 # Lane 2 — Sam, the scheduler (the spine of the demo)
 
-**Owner: Person 2.** You build `src/coworkers/sam.ts` and `fixtures/sam/*.json`. Nothing else. Read `plan/00-README-everyone.md` first, especially sections 3 (data conventions), 4 (contract), and 9 (Ambiguous commands).
+**Owner: Aryan.** You build `src/coworkers/sam.ts` and `fixtures/sam/*.json`. Nothing else. Read `plan/00-README-everyone.md` first, especially sections 3 (data conventions), 4 (contract), and 9 (Ambiguous commands).
 
 Sam's job in one paragraph: a caregiver tells the office they cannot make a visit. Sam finds that visit on the calendar, marks it as needing cover, works out which caregivers could do it, asks the best three by email, takes the first YES, gets the owner's OK with one click, then updates the calendar, tells the family and the other caregivers, and writes down what happened on everyone's record. The owner does one click. Everything else is Sam.
 
@@ -8,7 +8,7 @@ This is the flow the video spends 50 seconds on. It has to be flawless. Build it
 
 ---
 
-## What you can start right now (before Person 1's skeleton lands)
+## What you can start right now (before Adamay's skeleton lands)
 
 1. Run these and read the output; you will use every one of them:
    ```bash
@@ -22,13 +22,13 @@ This is the flow the video spends 50 seconds on. It has to be flawless. Build it
    npx ambiguous@latest mail send --help
    ```
 2. Write the fixtures (shapes from README section 4.1):
-   - `fixtures/sam/callout-handoff.json`: `{ "type":"handoff", "who":"sam", "from":"ops", "kind":"callout", "payload": { "emailId":"<fill after Person 1 sends a real email>" } }`
+   - `fixtures/sam/callout-handoff.json`: `{ "type":"handoff", "who":"sam", "from":"ops", "kind":"callout", "payload": { "emailId":"<fill after Adamay sends a real email>" } }`
    - `fixtures/sam/callout-text.json`: same but `payload: { "from":"<DEMO_GMAIL>+maria@gmail.com", "subject":"Can't make it", "body":"Hi, it's Maria. I'm sick and can't do Mr. Patel's visit Tuesday 2 to 6. Sorry!" }` so you can develop before any real email exists. Sam must accept either `emailId` or inline `from/subject/body`.
    - `fixtures/sam/reply-yes.json`: `{ "type":"email", "who":"sam", "emailId":"<fill later>", "to":"sam@...", "from":"...+priya@gmail.com", "subject":"Re: Can you cover Mr. Patel — Tue Sep 15, 2–6pm? [V-PATEL-0915]" }`
    - `fixtures/sam/task-done.json`: `{ "type":"task_done", "who":"sam", "taskId":"<fill later>" }`
 3. Draft the ranking prompt (section "Step 6" below) in a `.md` scratch file; you will paste it into code.
 
-Once Person 1 posts the keys and `config/ids.json`, `AMBI_API_TOKEN=$AMBI_KEY_SAM npx ambiguous@latest whoami` should say you are Sam.
+Once Adamay posts the keys and `config/ids.json`, `AMBI_API_TOKEN=$AMBI_KEY_SAM npx ambiguous@latest whoami` should say you are Sam.
 
 ---
 
@@ -77,7 +77,7 @@ The visit code is `V-<CLIENT LAST NAME UPPER>-<MMDD>`.
 
 - `cal.onDay('sam', date)` → occurrences that day. Filter titles containing the caregiver's first name (title format `Visit — <Client last> — <Caregiver first>`). If `client_hint` is set, prefer the one whose title contains it. If more than one remains, pick the one whose start hour matches `time_hint`. If none: post `❓ Sam: couldn't find Maria's visit on <date> → task for the owner`, create the task, reply to Maria "Got it, the office will confirm which visit", stop.
 - Parse `client_id` and `caregiver_id` from the description (`parseVisit`). Load the client (`people.get`) and the family contact (`family_contact_id` custom property).
-- Build the `Offer` skeleton with `code`, `masterEventId`, `occurrenceDate`, `isRecurring` (from the occurrence object Person 1's `cal.onDay` returns; check its comment for which field is the master id).
+- Build the `Offer` skeleton with `code`, `masterEventId`, `occurrenceDate`, `isRecurring` (from the occurrence object Adamay's `cal.onDay` returns; check its comment for which field is the master id).
 
 ## Step 3 — Flip the visit to NEEDS COVER
 
@@ -135,7 +135,7 @@ For each of the top 3:
   Thanks,
   Sam — Bayside Home Care
   ```
-- Save `emailId` and `threadId` from the send result onto the candidate. Save the offer. Non-allowlisted addresses are skipped by the helper (they will not be in the demo's top 3 if the seed is right; if one is, tell Person 1 to fix the seed).
+- Save `emailId` and `threadId` from the send result onto the candidate. Save the offer. Non-allowlisted addresses are skipped by the helper (they will not be in the demo's top 3 if the seed is right; if one is, tell Adamay to fix the seed).
 - Optional (cut list item 3): schedule an `offer_timeout` timer event for 3 minutes (demo) that, if `status === 'offered'`, creates a `Needs a human:` task with the next 3 names and posts in #office.
 
 ## Step 9 — Handle replies (`email` events to sam@)
@@ -148,7 +148,7 @@ For each of the top 3:
 
 ## Step 10 — Ask the owner (one click)
 
-- `const ok = await approvals.request('sam', { title: "APPROVE: Priya for Patel — Tue Sep 15, 2–6pm", contactId: clientId, description: <why Priya (the reason from ranking), what happens on Done: calendar updated, family emailed, the other two thanked> })`. This blocks until the owner marks the task Done (Person 1's helper handles the event or polls).
+- `const ok = await approvals.request('sam', { title: "APPROVE: Priya for Patel — Tue Sep 15, 2–6pm", contactId: clientId, description: <why Priya (the reason from ranking), what happens on Done: calendar updated, family emailed, the other two thanked> })`. This blocks until the owner marks the task Done (Adamay's helper handles the event or polls).
 - `offer.approvalTaskId` saved before awaiting, so a restart can recover (on startup, for offers in `accepted` with an `approvalTaskId`, re-enter step 10 by polling that task).
 - If `ok === false` (cancelled/timeout): post `⏸️ Sam: owner didn't approve Priya for Patel → back to the list`, mark `status = 'offered'`, and offer to the next candidate not yet asked (or create a `Needs a human:` task). This branch is not in the video; keep it minimal.
 
@@ -173,13 +173,13 @@ In this order, and post to #office only at the end:
 
 ## Acceptance test (run this against the live workspace before you say you are done)
 
-1. `npm run reset` (Person 1's script).
+1. `npm run reset` (Adamay's script).
 2. `npm run co -- sam fixtures/sam/callout-text.json` → Patel's occurrence is red NEEDS COVER; a `Cover:` task exists with three names and reasons; three emails were sent (`AMBI_API_TOKEN=$AMBI_KEY_SAM npx ambiguous@latest mail sent --json`), only to plus-addresses; one #office line.
 3. Reply YES from the `+priya` inbox. `npm run co -- sam fixtures/sam/reply-yes.json` (with the real `emailId` from `mail inbox --unread true --json`) → `APPROVE:` task assigned to the owner appears.
 4. Owner marks Done → within 15 seconds the occurrence is green with Priya, the family and the two others received email, three CRM notes exist, the cover task is done, the ✅ line is in #office.
 5. Run step 2 again → Sam says "already working on" and changes nothing.
 
-Send Person 1 three lines about what you built for the README, plus the timing of steps 2–4 (they need it for the video cuts).
+Send Adamay three lines about what you built for the README, plus the timing of steps 2–4 (they need it for the video cuts).
 
 ---
 

@@ -5,6 +5,8 @@ Everything in here is a decision, not a suggestion. If you want to change one, s
 
 Hard deadline: **4:30 PM PDT today**. Code freeze **3:45 PM**. Video recorded by **4:10 PM**.
 
+Lanes: **Adamay = lane 1** (foundation, seed, Ops, README), **Aryan = lane 2** (Sam, the spine; also workspace owner, video, submission), **Akshat = lane 3** (Cara and Ravi).
+
 ---
 
 ## 1. What we are building, in plain words
@@ -15,10 +17,10 @@ We are building that office inside **Ambiguous AI**, a workspace suite (mail, ch
 
 | Coworker | Job in one line | Built by |
 | --- | --- | --- |
-| **Ops** | Front desk. Reads everything that arrives, decides who handles it, hands it off, keeps the office channel and the daily brief. | Person 1 |
-| **Sam** | Scheduler. When a caregiver cancels, finds the best replacements, makes the offers, gets the owner's OK, fixes the calendar, tells the family. | Person 2 |
-| **Cara** | Care coordinator. Turns a family's "we need care" request into a client record, a care plan draft, and a booked assessment. | Person 3 |
-| **Ravi** | People. Turns a job application into a screened candidate with a booked interview, and keeps caregiver certifications from expiring. | Person 3 |
+| **Ops** | Front desk. Reads everything that arrives, decides who handles it, hands it off, keeps the office channel and the daily brief. | Adamay |
+| **Sam** | Scheduler. When a caregiver cancels, finds the best replacements, makes the offers, gets the owner's OK, fixes the calendar, tells the family. | Aryan |
+| **Cara** | Care coordinator. Turns a family's "we need care" request into a client record, a care plan draft, and a booked assessment. | Akshat |
+| **Ravi** | People. Turns a job application into a screened candidate with a booked interview, and keeps caregiver certifications from expiring. | Akshat |
 
 The human owner does exactly one kind of work: clicking **Done** on an approval task when a coworker wants to put a caregiver into a client's home. Everything else runs on its own and is visible in the workspace as it happens.
 
@@ -34,15 +36,15 @@ This is the target. Every lane exists to make one of these shots real. If someth
 
 | Time | On screen | Who makes it work |
 | --- | --- | --- |
-| 0:00 | Title: "Bayside Home Care. One owner. Four AI coworkers. Zero office staff." | Person 1 |
-| 0:08 | Ambiguous member list: the owner plus Ops, Sam, Cara, Ravi. CRM with 50 clients and 50 caregivers. The Visits calendar for the month. | Person 1 |
-| 0:22 | Maria (a caregiver) emails the office from her phone: "Sick today, can't do Mr. Patel 2 to 6." Ops's inbox lights up. Ops posts in #office: "Call-out from Maria for Patel today. Handing to Sam." | Person 1 |
-| 0:40 | Sam flips the calendar visit to red NEEDS COVER. A task appears: "Cover Patel, Tue 2–6pm" with three ranked caregivers and a one-line reason each ("Gujarati speaker, did 4 visits with Patel, free Tue afternoons"). Three offer emails go out from Sam's own address. | Person 2 |
-| 1:00 | Priya replies YES from her phone. Sam creates "APPROVE: Priya for Patel, Tue 2–6pm" assigned to the owner. Owner clicks Done. | Person 2 + Person 1 (approval helper) |
-| 1:15 | Calendar visit turns green with Priya's name. The family gets an email. The other two get "filled, thank you". Both CRM cards get a note. The cover task closes itself. | Person 2 |
-| 1:30 | Cut: a family fills the public "Request care" form. Cara creates the client, drafts a care plan doc, books an assessment on the owner's calendar, emails the family. Pipeline card moves to "Assessment booked". | Person 3 |
-| 1:42 | Cut: someone fills the public "Apply to work here" form. Ravi screens it, books an interview, emails them. Pipeline card moves to "Interview booked". | Person 3 |
-| 1:52 | Audit log filtered to the last 10 minutes: Ops, Sam, Cara, Ravi by name, dozens of actions. Closing card. | Person 1 |
+| 0:00 | Title: "Bayside Home Care. One owner. Four AI coworkers. Zero office staff." | Adamay |
+| 0:08 | Ambiguous member list: the owner plus Ops, Sam, Cara, Ravi. CRM with 50 clients and 50 caregivers. The Visits calendar for the month. | Adamay |
+| 0:22 | Maria (a caregiver) emails the office from her phone: "Sick today, can't do Mr. Patel 2 to 6." Ops's inbox lights up. Ops posts in #office: "Call-out from Maria for Patel today. Handing to Sam." | Adamay |
+| 0:40 | Sam flips the calendar visit to red NEEDS COVER. A task appears: "Cover Patel, Tue 2–6pm" with three ranked caregivers and a one-line reason each ("Gujarati speaker, did 4 visits with Patel, free Tue afternoons"). Three offer emails go out from Sam's own address. | Aryan |
+| 1:00 | Priya replies YES from her phone. Sam creates "APPROVE: Priya for Patel, Tue 2–6pm" assigned to the owner. Owner clicks Done. | Aryan + Adamay (approval helper) |
+| 1:15 | Calendar visit turns green with Priya's name. The family gets an email. The other two get "filled, thank you". Both CRM cards get a note. The cover task closes itself. | Aryan |
+| 1:30 | Cut: a family fills the public "Request care" form. Cara creates the client, drafts a care plan doc, books an assessment on the owner's calendar, emails the family. Pipeline card moves to "Assessment booked". | Akshat |
+| 1:42 | Cut: someone fills the public "Apply to work here" form. Ravi screens it, books an interview, emails them. Pipeline card moves to "Interview booked". | Akshat |
+| 1:52 | Audit log filtered to the last 10 minutes: Ops, Sam, Cara, Ravi by name, dozens of actions. Closing card. | Adamay |
 
 The spine that must never break: **Maria emails → Sam offers → Priya says YES → owner approves → calendar, family, CRM updated.** If we are behind at 3:15 PM, everything else gets cut before this.
 
@@ -74,7 +76,7 @@ The contact's `title` field (a normal CRM field) also holds the role in words (`
 
 ### 3.2 Pipelines track a person's journey
 
-Two CRM pipelines, created by the seed script (Person 1):
+Two CRM pipelines, created by the seed script (Adamay):
 
 - **Client Onboarding**: `New request` → `Assessment booked` → `Care plan drafted` → `Active client`
 - **Hiring**: `Applied` → `Screened` → `Interview booked` → `Offer` → `Active caregiver`
@@ -120,7 +122,7 @@ Keep it to one line. This channel is what the owner watches, and it is what the 
 
 ### 3.7 Forms (public links, no account needed)
 
-- `Request care` (Cara's front door) and `Apply to work with us` (Ravi's front door). Fields are listed in lane 3. Person 1 creates them in seed and puts their ids in `config/ids.json`.
+- `Request care` (Cara's front door) and `Apply to work with us` (Ravi's front door). Fields are listed in lane 3. Adamay creates them in seed and puts their ids in `config/ids.json`.
 
 ### 3.8 Mail
 
@@ -136,29 +138,29 @@ One repo: `github.com/aryntmr/agents-everywhere` (already exists, public). One N
 
 ```
 agents-everywhere/
-  package.json                 owner: Person 1   (tell chat before adding a dependency)
+  package.json                 owner: Adamay   (tell chat before adding a dependency)
   .env                         never committed; keys live here
   config/ids.json              committed; every workspace id the code needs (calendar, channel, forms, pipelines, owner user id, agent user ids, email allowlist)
   fixtures/                    sample webhook payloads and sample emails/forms for offline testing (each lane adds its own)
   src/
-    types.ts                   owner: Person 1   FROZEN after 2:20 PM. The event shape and the coworker interface.
-    ambi.ts                    owner: Person 1   the only way anyone talks to Ambiguous
-    llm.ts                     owner: Person 1   the only way anyone talks to the model
-    approvals.ts               owner: Person 1   "ask the owner, wait for Done"
-    rulebook.ts                owner: Person 1   loads the Agency Rulebook doc text (cached 60s)
-    people.ts                  owner: Person 1   load all CRM contacts, filter by role, find by email, add note
-    server.ts                  owner: Person 1   receives Ambiguous events, routes to coworkers
-    seed/                      owner: Person 1   seed + reset scripts and data generators
+    types.ts                   owner: Adamay   FROZEN after 2:20 PM. The event shape and the coworker interface.
+    ambi.ts                    owner: Adamay   the only way anyone talks to Ambiguous
+    llm.ts                     owner: Adamay   the only way anyone talks to the model
+    approvals.ts               owner: Adamay   "ask the owner, wait for Done"
+    rulebook.ts                owner: Adamay   loads the Agency Rulebook doc text (cached 60s)
+    people.ts                  owner: Adamay   load all CRM contacts, filter by role, find by email, add note
+    server.ts                  owner: Adamay   receives Ambiguous events, routes to coworkers
+    seed/                      owner: Adamay   seed + reset scripts and data generators
     coworkers/
-      ops.ts                   owner: Person 1
-      sam.ts                   owner: Person 2
-      cara.ts                  owner: Person 3
-      ravi.ts                  owner: Person 3
+      ops.ts                   owner: Adamay
+      sam.ts                   owner: Aryan
+      cara.ts                  owner: Akshat
+      ravi.ts                  owner: Akshat
   plan/                        these docs
-  README.md                    owner: Person 1 (written at 3:45 PM; each person sends 3 lines about what they built)
+  README.md                    owner: Adamay (written at 3:45 PM; each person sends 3 lines about what they built)
 ```
 
-### 4.1 `src/types.ts` (Person 1 pushes this in the first 15 minutes; everyone codes against it)
+### 4.1 `src/types.ts` (Adamay pushes this in the first 15 minutes; everyone codes against it)
 
 ```ts
 export type Who = 'ops' | 'sam' | 'cara' | 'ravi';
@@ -199,7 +201,7 @@ If a wrapper you need is missing, call `ambi(...)` directly with the catalog's e
 ### 4.3 How a coworker is run
 
 - **Live:** `npm run dev` starts `server.ts`, which receives Ambiguous events and calls `coworkers[who].handle(event)`.
-- **Offline (this is how you develop):** `npm run co -- sam fixtures/sam/callout-email.json` runs `sam.handle(<that event>)` directly, against the real workspace, without waiting for any webhook. Person 1 provides `src/run.ts` for this in the skeleton. **Lanes 2 and 3 never wait on lane 1's server.** Write your fixture first, then your handler.
+- **Offline (this is how you develop):** `npm run co -- sam fixtures/sam/callout-email.json` runs `sam.handle(<that event>)` directly, against the real workspace, without waiting for any webhook. Adamay provides `src/run.ts` for this in the skeleton. **Lanes 2 and 3 never wait on lane 1's server.** Write your fixture first, then your handler.
 
 ### 4.4 Handoffs between coworkers
 
@@ -214,7 +216,7 @@ If a wrapper you need is missing, call `ambi(...)` directly with the catalog's e
 ## 5. Repo rules (this is how the merge works)
 
 1. Everyone commits to `main`. No feature branches today. `git pull --rebase` before every push. Push at least every 20 minutes.
-2. You only edit files you own (table in section 4). Need a change in a shared file? Post in chat; Person 1 makes it within 5 minutes.
+2. You only edit files you own (table in section 4). Need a change in a shared file? Post in chat; Adamay makes it within 5 minutes.
 3. `src/types.ts` is frozen at 2:20 PM. After that, adapt your code to it, not the other way round.
 4. New dependency? Say it in chat first (package.json is shared). Pin with `npm i <pkg>@latest`.
 5. Every coworker must run offline from a fixture (`npm run co -- <who> <fixture>`) and must not throw on a repeat of the same fixture (running it twice should be safe: find-before-create for contacts, deals, tasks).
@@ -227,16 +229,16 @@ If a wrapper you need is missing, call `ambi(...)` directly with the catalog's e
 
 ## 6. Timeline (PDT)
 
-| When | Person 1 (foundation + Ops) | Person 2 (Sam) | Person 3 (Cara + Ravi) |
+| When | Adamay (foundation + Ops) | Aryan (Sam) | Akshat (Cara + Ravi) |
 | --- | --- | --- | --- |
 | **now – 2:00** | Read docs. Provision the 4 coworkers, collect keys. Push skeleton: package.json, types.ts, ambi.ts, run.ts, config/ids.json (partial). Start the 20-minute verification list (section 8). | Read docs. Run `npx ambiguous@latest catalog calendar`, `catalog mail`, `catalog crm`, `catalog tasks`. Write `fixtures/sam/*.json`. Draft Sam's ranking prompt. | Read docs. Run `catalog forms`, `catalog crm`, `catalog docs`, `catalog calendar`. Write `fixtures/cara/*.json`, `fixtures/ravi/*.json`. Draft the two forms' field lists. |
 | **2:00 – 2:20** | Post keys + partial ids in chat. Freeze types.ts. Seed: pipelines, calendar, channel, project, forms, rulebook doc. | Implement Sam steps 1–4 (read call-out, find the visit, flip it). | Implement Cara steps 1–4 (contact, deal, care plan doc). |
 | **2:20 – 3:00** | Seed 50 + 50 contacts and the month of visits. Post full `config/ids.json`. Write approvals.ts, people.ts, rulebook.ts, server.ts routing, Ops classify + handoff. | Sam steps 5–8 (candidates, rank, task, offers). | Cara steps 5–8 (assessment, email, stage, note). Ravi steps 1–5 (contact, deal, screen, interview, email). |
 | **3:00 – 3:30** | Cloudflared tunnel, register webhooks, live end-to-end: real email to ops@ → Sam offers. Morning brief. Reset script. | Sam steps 9–12 (YES reply, approval, updates, notifications). | Ravi step 6 (certification sweep). Then polish emails and notes. |
 | **3:30 – 3:45** | Integration run twice from a clean reset. Fix what breaks, in priority order (section 7). | Same | Same |
-| **3:45** | **Code freeze.** Person 1 writes README from everyone's 3 lines. | Play "Priya" on your phone for the video. | Play the family and the applicant on your phone for the video. |
-| **3:45 – 4:10** | Record the video in one take (two if needed). Screen recording of the Ambiguous UI + phone on camera for the replies. | | |
-| **4:10 – 4:25** | Upload video, social post with all sponsor tags + #AgentsEverywhere, fill the form, submit. | Review the description text. | Review the description text. |
+| **3:45** | **Code freeze.** Adamay writes README from everyone's 3 lines and drafts the social post. | Aryan drives the video (owner screen, clicks the approval). Adamay plays "Priya" on a phone. | Akshat plays the family and the applicant on a phone. |
+| **3:45 – 4:10** | Record the video in one take (two if needed): Aryan's screen shows the Ambiguous UI, phones on camera for the replies. | | |
+| **4:10 – 4:25** | Adamay: upload video, post the social post with all sponsor tags + #AgentsEverywhere, send Aryan the URLs. | Aryan: fill the form and submit as team lead. | Review the description text. |
 
 ---
 
@@ -254,13 +256,13 @@ The spine (never cut): Maria emails ops@ → Ops hands to Sam → Sam flips the 
 
 ---
 
-## 8. First-20-minute verification (Person 1 runs these; results go in chat as ✅/❌ so lanes 2 and 3 can pick their fallback)
+## 8. First-20-minute verification (Adamay runs these; results go in chat as ✅/❌ so lanes 2 and 3 can pick their fallback)
 
 | # | Check | If ✅ | If ❌ |
 | --- | --- | --- | --- |
 | 1 | Four coworkers provisioned (`admin users provision-agent`) with keys; `npx ambiguous@latest whoami` shows each identity. | Four names in the audit log. | One shared agent key; names come from the #office line prefix only. |
 | 2 | `npx ambiguous@latest webhooks event-types` lists the events. Note the exact names for email received, form submitted, task completed. | server.ts uses those names. | Fall back to `notifications watch` (streams @mentions, DMs, task assignments) plus polling `mail inbox --unread` every 15 s. |
-| 3 | Email round trip: `mail send` from sam@ to a Gmail address arrives; replying from Gmail shows up in `mail inbox` for sam@. | Offers and YES replies go by email. | Caregivers reply through a third public form `Reply to an offer` (fields: visit code, your email, yes/no) and Sam listens to form events instead. Person 2 builds that path. |
+| 3 | Email round trip: `mail send` from sam@ to a Gmail address arrives; replying from Gmail shows up in `mail inbox` for sam@. | Offers and YES replies go by email. | Caregivers reply through a third public form `Reply to an offer` (fields: visit code, your email, yes/no) and Sam listens to form events instead. Aryan builds that path. |
 | 4 | Public form link works while logged out and a submission fires the form event (or shows in `forms get`). | Cara/Ravi listen to form events. | Cara/Ravi poll `api GET /api/forms/<id>/responses` every 15 s. |
 | 5 | `calendar events create` with a recurrence rule, then `calendar events list --single-events true` on a day shows occurrences, and `edit-single` changes one occurrence only. | Month of visits = ~70 repeating series. | Seed only the next 7 days as single events. |
 | 6 | A task assigned to the owner, marked Done in the UI, produces a task-completed event. | approvals.ts uses the event. | approvals.ts polls `tasks get` every 10 s (write this path anyway). |
@@ -293,7 +295,7 @@ npx ambiguous@latest crm contacts create --help   # long help for one command
 
 ### Commands we use (exact, from the live catalog)
 
-**Identity / admin (Person 1 only)**
+**Identity / admin (Adamay only)**
 ```
 admin users provision-agent --display-name <name> [--username <local part> --role <owner|admin|member|limited>]   → returns {user, api_key} ONCE
 admin users list --type agent
@@ -396,16 +398,16 @@ activity list [--resource-type --user-id --limit]    # last 30 days of workspace
 ## 10. Names, addresses, and demo people
 
 - Agency: **Bayside Home Care**, San Francisco. Timezone America/Los_Angeles.
-- Human owner: the workspace owner account (Person 1's login). Its user id goes in `config/ids.json → owner_user_id`.
+- Human owner: the workspace owner account (Aryan's Ambiguous login). Aryan clicks the approvals in the demo. Its user id goes in `config/ids.json → owner_user_id`.
 - Coworkers: Ops, Sam, Cara, Ravi. Usernames `ops`, `sam`, `cara`, `ravi`. Display names `Ops (front desk)`, `Sam (scheduling)`, `Cara (care coordination)`, `Ravi (people)`.
 - Demo caregivers with real inboxes (Gmail plus-addresses on one account we control, put the base address in `.env` as `DEMO_GMAIL` and generate `base+maria@gmail.com` etc.): **Maria Lopez** (the one who calls out), **Priya Shah** (says YES), **Dev Mehta** and **Rosa Alvarez** (the other two offers; Dev replies "no" in the video if there is time).
 - Demo client: **Mr. Arun Patel**, Tuesday/Thursday 2–6 pm, needs `transfers, meals, meds`, preferences `Gujarati speaker preferred`, family contact **Neha Patel** (`base+neha@gmail.com`).
 - Seed guarantees that Priya, Dev, and Rosa are the three best fits for Patel (only they have Gujarati or Hindi and `transfers`, are free Tuesday afternoons, and have no visit at 2–6 pm). Everyone else in the seed has an `@example.com` address and is never emailed.
-- Demo applicant: **Jordan Kim** (Person 3's own plus-address). Demo family for intake: **Lena Ortiz** asking for her father **Carlos Ortiz** (Person 3's plus-address).
+- Demo applicant: **Jordan Kim** (Akshat's own plus-address). Demo family for intake: **Lena Ortiz** asking for her father **Carlos Ortiz** (Akshat's plus-address).
 
 ---
 
-## 11. Submission checklist (Person 1, 4:10 PM)
+## 11. Submission checklist (Aryan submits as team lead at 4:10 PM; Adamay prepares README and the social post text)
 
 - Video ≤ 2:00, uploaded (YouTube unlisted or Loom).
 - Repo public, README: what it is, the four coworkers, architecture in 10 lines, how to run, what each person built, which parts were written today (all of `src/`).

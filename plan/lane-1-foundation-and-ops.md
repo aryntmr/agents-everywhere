@@ -1,6 +1,8 @@
 # Lane 1 — Foundation, seed data, Ops (front desk), demo & submission
 
-**Owner: Person 1.** You are the only person who touches shared files and the workspace's admin side. Everyone else is blocked on you for the first 20 minutes, so the order below is the order. Read `plan/00-README-everyone.md` first.
+**Owner: Adamay.** You are the only person who touches shared files. Everyone else is blocked on you for the first 20 minutes, so the order below is the order. Read `plan/00-README-everyone.md` first.
+
+One exception: the Ambiguous workspace belongs to Aryan's login, so Aryan runs step 1 (identities) right now, sitting next to you, and hands you the four keys. Everything from step 2 on is yours.
 
 Your deliverables, in priority order:
 
@@ -17,7 +19,7 @@ Your deliverables, in priority order:
 
 ## Step 1 — Identities (do this before anything else)
 
-You are logged in to https://app.ambiguous.ai as the workspace owner. You need one admin-capable key to provision agents, then one key per coworker.
+**Aryan does this step** (he is logged in to https://app.ambiguous.ai as the workspace owner). Five minutes. You need one admin-capable key to provision agents, then one key per coworker.
 
 1. In the UI: sidebar → **MCP** → **Claude Code** → **Authorize a new agent** → get the key. Name it `Ops (front desk)`, username `ops`. This first agent may or may not have admin rights; check with:
    ```bash
@@ -33,7 +35,7 @@ You are logged in to https://app.ambiguous.ai as the workspace owner. You need o
    npx ambiguous@latest admin users provision-agent --display-name "Ravi (people)" --username ravi --role member --json
    ```
    Each returns `{user, api_key}`. **The key is shown once.** If `member` cannot create calendars/pipelines/forms during seed, re-provision Ops as `admin` (seed runs as Ops).
-   Free plan cap is 5 members. Owner + 4 agents = 5. If provisioning the fourth fails, merge Cara and Ravi into one coworker named `Cara (care & people)` and tell Person 3 to use `AMBI_KEY_CARA` for both.
+   Free plan cap is 5 members. Owner + 4 agents = 5. If provisioning the fourth fails, merge Cara and Ravi into one coworker named `Cara (care & people)` and tell Akshat to use `AMBI_KEY_CARA` for both.
 3. Put the keys in `.env`:
    ```
    AMBI_KEY_OPS=ak_...
@@ -44,7 +46,7 @@ You are logged in to https://app.ambiguous.ai as the workspace owner. You need o
    OPENAI_MODEL=<the current default GPT model from the OpenAI dashboard>
    DEMO_GMAIL=<the gmail address whose plus-addresses play the demo people>
    ```
-   Send the four `ak_` keys to the team in a private message, never in the repo or the event chat.
+   Aryan sends the four `ak_` keys to Adamay and Akshat in a private message, never in the repo or the event chat.
 4. Record for `config/ids.json`: each agent's `user.id` and email address (`admin users list --type agent --json`), the owner's user id (`whoami` with the owner-authorized key, or `admin users list --type human`), and the workspace email domain (`admin domains list --json`).
 
 ## Step 2 — Skeleton (push by 2:05 PM; this unblocks lanes 2 and 3)
@@ -133,7 +135,7 @@ Idempotent: every create is preceded by a find (by name for calendar/channel/pro
 2. `chat channels create --type public --name office`; add all agents (`--member-ids`) if the flag is accepted, otherwise each agent runs `chat channels join <id>` once.
 3. `projects create --name Office --visibility workspace`.
 4. Pipelines: `crm pipelines create --name "Client Onboarding" --stages '[...]'` and `Hiring` with the stage names from the README, in order. Read back with `crm pipelines list --json` to capture stage ids.
-5. Forms (`forms create --is-published true`). Use field ids exactly as below; Person 3 codes against them.
+5. Forms (`forms create --is-published true`). Use field ids exactly as below; Akshat codes against them.
    - `request_care`: `family_name` (text), `family_email` (email), `family_phone` (text), `client_name` (text), `client_age` (number), `zip` (text), `needs` (multi-select checkbox from the skills vocabulary), `days_times` (long text), `language` (text), `has_pets` (select yes/no), `smoker` (select yes/no), `gender_pref` (select female/male/no preference), `hours_week` (number), `notes` (long text).
    - `apply`: `name` (text), `email` (email), `phone` (text), `zip` (text), `cert_type` (select HHA/CNA/none), `cert_expires` (date), `years_experience` (number), `skills` (multi-select from the vocabulary), `languages` (text), `availability` (long text), `has_car` (select yes/no), `why` (long text).
    Run `forms create --help` to see the exact `type` values (text, email, number, date, select, checkbox, long text) and the shape of `options`.
@@ -231,7 +233,7 @@ Handles:
 3. Post `📨 Ops: <summary> → <what happens next>` in #office. React 👀 is not available on email; mark the email read with `mail mark <id> --read true`.
 4. Route:
    - `callout` → `handoff('sam', {from:'ops', kind:'callout', payload:{emailId}})`.
-   - `care_request` → `handoff('cara', {from:'ops', kind:'care_request_email', payload:{emailId}})` (Cara treats it like a form with free-text answers; if Person 3 has no time for that, Ops instead creates a `Needs a human:` task and replies "thanks, we'll call you today").
+   - `care_request` → `handoff('cara', {from:'ops', kind:'care_request_email', payload:{emailId}})` (Cara treats it like a form with free-text answers; if Akshat has no time for that, Ops instead creates a `Needs a human:` task and replies "thanks, we'll call you today").
    - `application` → `handoff('ravi', {..., kind:'application_email', payload:{emailId}})` (same fallback).
    - `next_visit_question` → find the client from the sender (family contact → `client_id`), `cal.onDay` for the next 7 days filtered by the client's last name in the title, reply by email (`--in-reply-to`) with the next visit day, time, and caregiver first name. Note on the client timeline.
    - `availability_change` → update the caregiver's `availability` custom property with the LLM's rewrite of the new availability (`askJSON` → `{availability: string}`), note on the timeline, reply "updated, thanks", and create a task for the owner if any visit in the next 30 days for that caregiver now falls outside the new availability (`cal.onDay` over the range, filter by name; if too slow, skip this check and only note it).
@@ -249,16 +251,16 @@ and email the same to the owner. No LLM needed.
 
 1. `npm run reset`. 2. From `DEMO_GMAIL` send Maria's email to ops@: subject `Can't make it today`, body `Hi, it's Maria. I'm sick and can't do Mr. Patel's visit today 2 to 6. Sorry!` (For the demo, "today" must be a Tuesday or Thursday in the seed; if today is not, Maria writes "Tuesday" and the demo says "tomorrow". Decide now and put the date in `fixtures/sam/callout-email.json`.) 3. Watch #office. 4. Reply YES from `+priya`. 5. Mark the approval Done in the UI. 6. Submit the two forms from a phone. 7. Check the audit log. Time the whole thing: it must fit in 90 seconds of video with cuts.
 
-## Step 8 — Video, README, submission
+## Step 8 — README, social post, video support, submission
 
-- Screen record the Ambiguous UI at 1080p, phone visible on webcam for the email replies. Narrate live; no music. Follow the shot list in the README section 2. Two takes maximum.
+- Aryan records the video from his screen (he owns the workspace login and clicks the approval). You play Priya on your phone and keep `npm run dev` and the tunnel alive. Screen record at 1080p, phone visible on webcam for the replies. Narrate live; no music. Follow the shot list in the README section 2. Two takes maximum.
 - README sections: one-paragraph pitch, the four coworkers, "how work flows" diagram in text, the data conventions (link to `plan/00-README-everyone.md`), run instructions, team contributions (three lines each), "written today" statement.
 - Social post text (LinkedIn or X) with the sponsor tags from `resources.md` and `#AgentsEverywhere`. Copy the URL into the form.
-- Submit as team lead by 4:25 PM.
+- Send Aryan the video URL and the social post URL. Aryan submits as team lead by 4:25 PM.
 
 ## Fallbacks you own
 
 - No webhooks → `notifications watch` + inbox polling (server.ts fallback).
-- No external email → tell Person 2 to switch to the `Reply to an offer` form path; create that form in seed (fields: `visit_code` text, `email` email, `answer` select YES/NO).
+- No external email → tell Aryan to switch to the `Reply to an offer` form path; create that form in seed (fields: `visit_code` text, `email` email, `answer` select YES/NO).
 - Fourth agent not allowed → Cara and Ravi share `AMBI_KEY_CARA`; change the display name to `Cara (care & people)`.
-- Recurrence broken → seed 7 days of single events (about 100 events); Sam uses `calendar events update` instead of `edit-single` (Person 2's `cal.editOccurrence` wrapper hides this, so only `ambi.ts` changes).
+- Recurrence broken → seed 7 days of single events (about 100 events); Sam uses `calendar events update` instead of `edit-single` (the `cal.editOccurrence` wrapper in `ambi.ts` hides this, so only `ambi.ts` changes).
