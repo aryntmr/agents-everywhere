@@ -69,5 +69,25 @@
     "+neha@",
     "+lena@",
     "+jordan@"
-  ]
+  ],
+  "visit_series": {
+    "cl:arun.patel|cg:maria.lopez": "49a02089-cba3-4163-8b8b-8890add3c524",
+    "cl:harold.bennett|cg:anita.desai": "cca334ab-a115-4d9a-8bec-75533888fb85",
+    "cl:dorothy.fischer|cg:rahul.kapoor": "2c4857bd-bf06-4549-8155-4320b67f1303",
+    "cl:harold.bennett|cg:diego.castro": "631fe6a4-7a90-45ab-be36-ef0400e55606",
+    "cl:dorothy.fischer|cg:dev.mehta": "ac49cff7-689f-4005-a049-f14e759afcaa",
+    "cl:walter.nakamura|cg:jin.park": "82873807-c731-4abc-bc02-0cec7eb2f473",
+    "cl:walter.nakamura|cg:martha.owens": "bb933a9c-a5cd-401c-8c80-de921b6aa3c0",
+    "cl:evelyn.murphy|cg:carla.ortega": "342e30c2-1ff6-413e-8482-9681e044b020",
+    "cl:evelyn.murphy|cg:yuki.tanaka": "b8a11986-c76d-4f95-8fe2-5fda81337fc5",
+    "cl:frank.russo|cg:paolo.rossi": "dfccb744-407f-4f9f-bdf1-b8237ee610ca",
+    "cl:frank.russo|cg:rosa.alvarez": "2aace288-65e4-4e04-813d-4a8f75f74f10",
+    "cl:gladys.coleman|cg:nina.volkova": "a5ddb4a0-63d8-41e3-b7b2-9a66a0d49c90",
+    "cl:gladys.coleman|cg:ana.cruz": "aa65e734-3d25-47f7-b31c-bbbe16b85bf0",
+    "cl:henry.yamamoto|cg:gloria.mendoza": "f494fe89-21a0-4615-8f4a-7ed9a7a2715b",
+    "cl:henry.yamamoto|cg:priya.shah": "c1f5e5ef-1944-4caf-9043-ed98a50859cf"
+  },
+  "demo": {
+    "patel_series_event_id": "49a02089-cba3-4163-8b8b-8890add3c524"
+  }
 }

@@ -206,12 +206,23 @@ export const crm = {
     return rows.find((c: any) => String(c.email ?? '').toLowerCase() === want) ?? null;
   },
   async all(as: Who): Promise<any[]> {
+    // Page by cursor when the API returns one, else by the rows actually returned; stop on an empty or repeated page.
     const out: any[] = [];
-    for (let offset = 0; ; offset += 100) {
-      const page = list(await ambi(as, ['crm', 'contacts', 'list', '--type', 'person', '--limit', '100', '--offset', String(offset)]));
+    const seen = new Set<string>();
+    let cursor: string | undefined;
+    for (let i = 0; i < 50; i++) {
+      const args = ['crm', 'contacts', 'list', '--type', 'person', '--limit', '100'];
+      if (cursor) args.push('--cursor', cursor);
+      else if (out.length) args.push('--offset', String(out.length));
+      const res = await ambi(as, args);
+      const page = list(res).filter((c: any) => c?.id && !seen.has(c.id));
+      if (!page.length) return out;
+      for (const c of page) seen.add(c.id);
       out.push(...page);
-      if (page.length < 100) return out;
+      cursor = res?.next_cursor ?? res?.nextCursor ?? undefined;
+      if (!cursor && res?.has_more === false) return out;
     }
+    return out;
   },
   async get(as: Who, id: string): Promise<any> {
     return one(await ambi(as, ['crm', 'contacts', 'get', id]));
