@@ -260,8 +260,8 @@ The spine (never cut): Maria emails ops@ → Ops hands to Sam → Sam flips the 
 
 | # | Check | If ✅ | If ❌ |
 | --- | --- | --- | --- |
-| 1 | Four coworkers provisioned (`admin users provision-agent`) with keys; `npx ambiguous@latest whoami` shows each identity. | Four names in the audit log. | One shared agent key; names come from the #office line prefix only. |
-| 2 | `npx ambiguous@latest webhooks event-types` lists the events. Note the exact names for email received, form submitted, task completed. | server.ts uses those names. | Fall back to `notifications watch` (streams @mentions, DMs, task assignments) plus polling `mail inbox --unread` every 15 s. |
+| 1 | ✅ Done at Gate 0 by `node scripts/provision-coworkers.mjs`: ops@, sam@, cara@, ravi@freddies-workspace.ambi.cc, ids in `config/ids.json`. | Four names in the audit log. | One shared agent key; names come from the #office line prefix only. |
+| 2 | ✅ Checked at Gate 0 with `webhooks event-types`. Names: `email.received`, `form.submitted`, `task.completed`, `task.assigned`. | server.ts uses those names. | Fall back to `notifications watch` (streams @mentions, DMs, task assignments) plus polling `mail inbox --unread` every 15 s. |
 | 3 | Email round trip: `mail send` from sam@ to a Gmail address arrives; replying from Gmail shows up in `mail inbox` for sam@. | Offers and YES replies go by email. | Caregivers reply through a third public form `Reply to an offer` (fields: visit code, your email, yes/no) and Sam listens to form events instead. Aryan builds that path. |
 | 4 | Public form link works while logged out and a submission fires the form event (or shows in `forms get`). | Cara/Ravi listen to form events. | Cara/Ravi poll `api GET /api/forms/<id>/responses` every 15 s. |
 | 5 | `calendar events create` with a recurrence rule, then `calendar events list --single-events true` on a day shows occurrences, and `edit-single` changes one occurrence only. | Month of visits = ~70 repeating series. | Seed only the next 7 days as single events. |
@@ -307,6 +307,8 @@ webhooks list
 notifications watch          # JSON lines: @mentions, DMs, task assignments, doc shares (fallback wake-up path)
 notifications mark-read <id> # returns was_unread; act only if true
 ```
+
+Confirmed webhook event names (checked at Gate 0): `email.received`, `form.submitted`, `task.completed`, `task.assigned`, `mention`, `message.received`, `event.updated`, `deal.stage_changed`, `contact.created`, `document.shared`. Subscribing to `*` gets everything; filter in `server.ts`. A free workspace allows 5 members, so the owner plus four coworkers is the ceiling.
 
 **CRM**
 ```

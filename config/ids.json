@@ -1,0 +1,27 @@
+{
+  "workspace_id": "0bcecbb8-7513-4d33-abdc-99bbc8ce1967",
+  "owner_user_id": "b097e44b-8b25-4e41-83be-34c64bc19ae5",
+  "workspace_domain": "freddies-workspace.ambi.cc",
+  "agents": {
+    "ops": {
+      "user_id": "196138f6-e6bb-4c0b-85b7-b93f84871bc6",
+      "email": "ops@freddies-workspace.ambi.cc",
+      "display_name": "Ops (front desk)"
+    },
+    "sam": {
+      "user_id": "371fc190-0ecb-4589-91e0-827b61e83f62",
+      "email": "sam@freddies-workspace.ambi.cc",
+      "display_name": "Sam (scheduling)"
+    },
+    "cara": {
+      "user_id": "ab2c37c2-b597-4f53-b604-507876a697b5",
+      "email": "cara@freddies-workspace.ambi.cc",
+      "display_name": "Cara (care coordination)"
+    },
+    "ravi": {
+      "user_id": "aeaaa8e1-f663-4420-9d5c-9f87e42ead92",
+      "email": "ravi@freddies-workspace.ambi.cc",
+      "display_name": "Ravi (people)"
+    }
+  }
+}

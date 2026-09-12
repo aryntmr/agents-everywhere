@@ -30,6 +30,8 @@ Until one of these lands, the team develops against Aryan's key only for the off
 
 ## Step 1 — Identities (do this before anything else)
 
+**✅ Done at Gate 0.** Aryan ran `node scripts/provision-coworkers.mjs`. The four coworkers exist, their keys are in Aryan's `.env` (he sends them to you privately), and `config/ids.json` has `workspace_id`, `owner_user_id`, `workspace_domain`, and each agent's `user_id` and email. Skip to step 2. The notes below are kept for reference only.
+
 **Aryan does this step** (he is logged in to https://app.ambiguous.ai as the workspace owner). Five minutes. You need one admin-capable key to provision agents, then one key per coworker.
 
 1. In the UI: sidebar → **MCP** → **Claude Code** → **Authorize a new agent** → get the key. Name it `Ops (front desk)`, username `ops`. This first agent may or may not have admin rights; check with:
