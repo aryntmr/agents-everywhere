@@ -3,6 +3,13 @@
     "exa": {
       "type": "http",
       "url": "https://mcp.exa.ai/mcp"
+    },
+    "ambiguous": {
+      "type": "http",
+      "url": "https://app.ambiguous.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${AMBI_API_TOKEN}"
+      }
     }
   }
 }

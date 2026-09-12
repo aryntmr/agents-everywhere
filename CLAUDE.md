@@ -19,7 +19,7 @@ Details: `hackathon_information.md` · links, keys, CLIs: `resources.md` · prog
 
 ## Project
 
-_TBD — direction not chosen yet._
+_Idea TBD._ **Prize lane: Best Use of Ambiguous AI (NVIDIA DGX Spark)** — the agent lives in an Ambiguous workspace as a coworker with its own identity and is woken by workspace events (mentions, DMs, task assignments). Setup: `resources.md` → "Ambiguous AI track". Load keys into the shell before starting Claude Code: `set -a; source .env; set +a`.
 
 ---
 

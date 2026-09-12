@@ -72,9 +72,9 @@ Optional — do all of them anyway:
 
 ## Credits (survey-gated)
 
-A 6-question survey (about 3 min) unlocks:
-- **OpenAI** — one unique code per eligible in-person attendee, while supply lasts; waitlist in survey-completion order
-- **OpenRouter** — one unique code per checked-in attendee, from a global pool
-- **Exa** — shared offer
+Survey **submitted Sep 12**. Unlocked:
+- **OpenAI** — 1,250 Codex credits ($50). **Codex usage only — not API credits** or a ChatGPT subscription. Redeem by Sep 26, 2026 (UTC) on a personal ChatGPT account (not Business/Enterprise); credits expire 30 days after redemption.
+- **OpenRouter** — one code per checked-in attendee from a global pool; not assigned yet — email + DM when ready.
+- **Exa** — shared offer code, shown on the Credits page (never post it).
 
 Codes are private and non-transferable. "We cannot assist with redemption errors" — follow the steps exactly.

@@ -9,3 +9,4 @@ dist/
 build/
 .trigger/
 .DS_Store
+.ambi/
