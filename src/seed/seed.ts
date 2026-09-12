@@ -94,7 +94,7 @@ async function containers() {
 }
 
 // Field type names and the options shape (plain string array) are unconfirmed; `forms create --help` does not list them.
-const FIELD_TYPE = { text: 'text', email: 'email', number: 'number', date: 'date', select: 'select', multi: 'checkbox', long: 'textarea' } as const;
+const FIELD_TYPE = { text: 'short_text', email: 'email', number: 'number', date: 'date', select: 'select', multi: 'multi_select', long: 'long_text' } as const;
 const field = (id: string, type: keyof typeof FIELD_TYPE, label: string, required = false, options?: readonly string[]) =>
   ({ id, type: FIELD_TYPE[type], label, required, ...(options ? { options: [...options] } : {}) });
 
@@ -319,14 +319,15 @@ async function visits(data: SeedData) {
 }
 
 async function main() {
-  const demoGmail = process.env.DEMO_GMAIL;
-  if (!demoGmail?.includes('@')) throw new Error('DEMO_GMAIL is not set in .env');
   const onlyIdx = process.argv.indexOf('--only');
   const only = onlyIdx >= 0 ? process.argv[onlyIdx + 1] : undefined;
   if (only && !['containers', 'contacts', 'visits'].includes(only)) throw new Error('--only must be containers, contacts, or visits');
 
-  const data = buildSeed(demoGmail);
   if (!only || only === 'containers') await containers();
+  if (only === 'containers') return;
+  const demoGmail = process.env.DEMO_GMAIL;
+  if (!demoGmail?.includes('@')) throw new Error('DEMO_GMAIL is not set in .env');
+  const data = buildSeed(demoGmail);
   if (!only || only === 'contacts') await contacts(data);
   if (!only || only === 'visits') await visits(data);
 }

@@ -23,5 +23,51 @@
       "email": "ravi@freddies-workspace.ambi.cc",
       "display_name": "Ravi (people)"
     }
-  }
+  },
+  "visits_calendar_id": "34db43f7-4125-47ab-90f3-6882fb8dbc08",
+  "office_channel_id": "9db4f8e4-ea05-499b-995a-eb10312a8233",
+  "office_project_id": "55d9b4dc-2a4d-49ac-91dd-0ce4d24df420",
+  "pipelines": {
+    "client_onboarding": {
+      "id": "2525423d-f08d-46b0-9049-f5dfc308fbe5",
+      "stages": {
+        "new_request": "7c757650-9237-4aa4-9f0c-3999f376583e",
+        "assessment_booked": "671c721a-e7fe-474b-89a1-fd37a1febd35",
+        "care_plan_drafted": "ff57f2d3-8d03-4428-849f-3901bb92774d",
+        "active_client": "7da57f8c-9be1-4f37-8619-aa71714f2013"
+      }
+    },
+    "hiring": {
+      "id": "50022978-dc6b-49ea-bb86-69fda5b776ae",
+      "stages": {
+        "applied": "124ed09e-27e7-44c4-956c-f09c4fc7af85",
+        "screened": "0c6c6e21-65b2-43f9-ae95-f96185c7158d",
+        "interview_booked": "61913f14-26bc-4d08-ae96-a04c0fddf430",
+        "offer": "c81669d7-34ec-42d3-be2a-40f7b31e9ed6",
+        "active_caregiver": "90d0875e-b3e6-4d4c-aa29-173a443e1288"
+      }
+    }
+  },
+  "forms": {
+    "request_care": {
+      "id": "0ea9a290-5ac4-4157-b686-e782222a2e3a",
+      "slug": "request-care",
+      "public_url": "https://app.ambiguous.ai/f/request-care"
+    },
+    "apply": {
+      "id": "8e3cd617-0c09-4e01-b76b-ea0d086d43d8",
+      "slug": "apply-to-work-with-us",
+      "public_url": "https://app.ambiguous.ai/f/apply-to-work-with-us"
+    }
+  },
+  "rulebook_doc_id": "7311417f-82ad-472a-94d5-15e0783dcda3",
+  "email_allowlist": [
+    "+maria@",
+    "+priya@",
+    "+dev@",
+    "+rosa@",
+    "+neha@",
+    "+lena@",
+    "+jordan@"
+  ]
 }
