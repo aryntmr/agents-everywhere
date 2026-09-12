@@ -1,0 +1,5 @@
+{
+  "type": "timer",
+  "who": "ops",
+  "kind": "morning_brief"
+}

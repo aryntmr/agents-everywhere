@@ -1,0 +1,13 @@
+{
+  "type": "email",
+  "who": "ops",
+  "emailId": "fixture-callout",
+  "to": "ops@freddies-workspace.ambi.cc",
+  "from": "demo+maria@gmail.com",
+  "subject": "Can't make it today",
+  "raw": {
+    "from": "demo+maria@gmail.com",
+    "subject": "Can't make it today",
+    "body": "Hi, it's Maria. I'm sick and can't do Mr. Patel's visit today 2 to 6. Sorry!"
+  }
+}

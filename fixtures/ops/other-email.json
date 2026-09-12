@@ -1,0 +1,13 @@
+{
+  "type": "email",
+  "who": "ops",
+  "emailId": "fixture-other",
+  "to": "ops@freddies-workspace.ambi.cc",
+  "from": "demo+neha@gmail.com",
+  "subject": "Invoice question",
+  "raw": {
+    "from": "demo+neha@gmail.com",
+    "subject": "Invoice question",
+    "body": "Hi, I think we were billed twice for August. Could someone take a look? Thanks, Neha"
+  }
+}
