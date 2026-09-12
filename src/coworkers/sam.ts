@@ -544,9 +544,15 @@ async function reply(ev: Extract<Event, { type: "email" }>): Promise<void> {
     Object.values(offers).find((o) =>
       o.candidates.some((c) => c.threadId && c.threadId === m.thread_id),
     ) ?? (code ? offers[code] : undefined);
+  const replyText = emailText(m);
+  const mailbox = (addr: string) => addr.toLowerCase().replace(/\+[^@]*@/, "@");
+  // Gmail replies arrive from the base address on a new thread: fall back to the greeting quoted from the offer
+  // ("Hi Priya"), then, when every candidate shares the sender's mailbox, to the top-ranked candidate.
   const cand =
     offer?.candidates.find((c) => c.threadId === m.thread_id) ??
-    offer?.candidates.find((c) => c.email.toLowerCase() === from);
+    offer?.candidates.find((c) => c.email.toLowerCase() === from) ??
+    offer?.candidates.find((c) => new RegExp(`\bHi ${firstName(c.name)}\b`, "i").test(replyText)) ??
+    (offer && offer.candidates.every((c) => mailbox(c.email) === mailbox(from)) ? offer.candidates[0] : undefined);
   if (!offer || !cand)
     return needsHuman(
       `email to Sam that isn't an offer reply: ${m.subject ?? ev.subject}`,
