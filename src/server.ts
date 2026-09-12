@@ -5,6 +5,16 @@ import { ambi, ids, list, TZ } from './ambi.ts';
 import * as approvals from './approvals.ts';
 import { coworker } from './registry.ts';
 import type { Event, Who } from './types.ts';
+import { mkdirSync, writeFileSync } from 'node:fs';
+
+// Keeps the latest real payload per event type so lanes can build fixtures from actual shapes.
+function captureRaw(type: string, body: unknown) {
+  if (!type) return;
+  try {
+    mkdirSync('fixtures/raw', { recursive: true });
+    writeFileSync(`fixtures/raw/${type.replace(/[^a-z0-9._-]/gi, '_')}.json`, `${JSON.stringify(body, null, 2)}\n`);
+  } catch {}
+}
 
 export { handoff } from './registry.ts';
 
@@ -141,6 +151,7 @@ export function normalizeAnswers(raw: any, fields: { id: string; label: string }
 async function routeWebhook(body: any, deliveryId: string) {
   const type = String(body?.event ?? body?.type ?? '');
   const data = body?.data ?? {};
+  captureRaw(type, body);
 
   if (type === 'email.received') {
     const e = emailFields(data);
