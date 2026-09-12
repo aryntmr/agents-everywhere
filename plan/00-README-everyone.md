@@ -5,7 +5,7 @@ Everything in here is a decision, not a suggestion. If you want to change one, s
 
 Hard deadline: **4:30 PM PDT today**. Code freeze **3:45 PM**. Video recorded by **4:10 PM**.
 
-Lanes: **Adamay = lane 1** (foundation, seed, Ops, README), **Aryan = lane 2** (Sam, the spine; also workspace owner, video, submission), **Akshat = lane 3** (Cara and Ravi).
+Lanes: **Adamay = lane 1** (foundation, seed, Ops, README, and getting a model key from the organizers), **Aryan = lane 2** (Sam, the spine; also workspace owner, video, submission), **Akshat = lane 3** (Cara and Ravi).
 
 ---
 
@@ -231,7 +231,7 @@ If a wrapper you need is missing, call `ambi(...)` directly with the catalog's e
 
 | When | Adamay (foundation + Ops) | Aryan (Sam) | Akshat (Cara + Ravi) |
 | --- | --- | --- | --- |
-| **now – 2:00** | Read docs. Provision the 4 coworkers, collect keys. Push skeleton: package.json, types.ts, ambi.ts, run.ts, config/ids.json (partial). Start the 20-minute verification list (section 8). | Read docs. Run `npx ambiguous@latest catalog calendar`, `catalog mail`, `catalog crm`, `catalog tasks`. Write `fixtures/sam/*.json`. Draft Sam's ranking prompt. | Read docs. Run `catalog forms`, `catalog crm`, `catalog docs`, `catalog calendar`. Write `fixtures/cara/*.json`, `fixtures/ravi/*.json`. Draft the two forms' field lists. |
+| **now – 2:00** | Read docs. Ask the organizers for an OpenRouter/OpenAI API key (lane 1 step 0) and keep asking until it lands. Provision the 4 coworkers, collect keys. Push skeleton: package.json, types.ts, ambi.ts, run.ts, config/ids.json (partial). Start the 20-minute verification list (section 8). | Read docs. Run `npx ambiguous@latest catalog calendar`, `catalog mail`, `catalog crm`, `catalog tasks`. Write `fixtures/sam/*.json`. Draft Sam's ranking prompt. | Read docs. Run `catalog forms`, `catalog crm`, `catalog docs`, `catalog calendar`. Write `fixtures/cara/*.json`, `fixtures/ravi/*.json`. Draft the two forms' field lists. |
 | **2:00 – 2:20** | Post keys + partial ids in chat. Freeze types.ts. Seed: pipelines, calendar, channel, project, forms, rulebook doc. | Implement Sam steps 1–4 (read call-out, find the visit, flip it). | Implement Cara steps 1–4 (contact, deal, care plan doc). |
 | **2:20 – 3:00** | Seed 50 + 50 contacts and the month of visits. Post full `config/ids.json`. Write approvals.ts, people.ts, rulebook.ts, server.ts routing, Ops classify + handoff. | Sam steps 5–8 (candidates, rank, task, offers). | Cara steps 5–8 (assessment, email, stage, note). Ravi steps 1–5 (contact, deal, screen, interview, email). |
 | **3:00 – 3:30** | Cloudflared tunnel, register webhooks, live end-to-end: real email to ops@ → Sam offers. Morning brief. Reset script. | Sam steps 9–12 (YES reply, approval, updates, notifications). | Ravi step 6 (certification sweep). Then polish emails and notes. |

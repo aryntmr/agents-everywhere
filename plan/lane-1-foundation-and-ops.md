@@ -6,6 +6,7 @@ One exception: the Ambiguous workspace belongs to Aryan's login, so Aryan runs s
 
 Your deliverables, in priority order:
 
+0. A model key from the hackathon, not Aryan's personal OpenAI key (start now, in parallel with everything else, see Step 0).
 1. Coworker identities and keys (by 1:55 PM).
 2. Repo skeleton everyone codes against: `package.json`, `src/types.ts`, `src/ambi.ts`, `src/run.ts`, `config/ids.json` (by 2:05 PM).
 3. Verification list results posted in chat (by 2:10 PM).
@@ -16,6 +17,16 @@ Your deliverables, in priority order:
 8. Reset script, README, video, social post, submission (3:45 – 4:25 PM).
 
 ---
+
+## Step 0 — Get a model key from the hackathon (runs in the background all afternoon)
+
+The coworkers need a language model for classifying, ranking, and drafting. The hackathon's OpenAI credits are Codex-only (they do not work for API calls), so we need one of these, in order of preference:
+
+1. **OpenRouter.** The organizers promised a credit code by email and DM to the team lead (Aryan). Ask in the event chat (https://sf.aitinkerers.org/message_center?board=meetup_mu_TjLaGdOuI4E) whether the OpenRouter codes are out, and check the Credits page (https://sf.aitinkerers.org/hackathon-rewards/hrc_4720e4ed2ba8082ed3ca077732195d41). When you have a code: redeem at https://openrouter.ai, create a key at https://openrouter.ai/settings/keys, put it in `.env` as `OPENROUTER_API_KEY` and set `OPENAI_MODEL` to an OpenRouter model id (for example `openai/gpt-5` or whatever the OpenRouter models page lists as current; pick one that supports JSON schema output). `llm.ts` uses OpenRouter automatically when `OPENROUTER_API_KEY` is set and `OPENAI_API_KEY` is empty.
+2. **Ask an OpenAI mentor on site** for an API key or an org invite with credits. Same `.env` slot, `OPENAI_API_KEY`.
+3. **Mozilla.ai** sponsors sometimes hand out hosted-model access; ask at their table.
+
+Until one of these lands, the team develops against Aryan's key only for the offline fixture runs, and you swap the key before the integration run at 3:15 PM. Post in chat the moment a hackathon key is in `.env` so everyone pulls the new `.env.example` note. Do not let this block step 1: ask, then keep building while you wait.
 
 ## Step 1 — Identities (do this before anything else)
 
