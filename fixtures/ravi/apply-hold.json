@@ -10,10 +10,13 @@
     "cert_type": "none",
     "cert_expires": "",
     "years_experience": 0.5,
-    "skills": ["companionship", "meals"],
+    "skills": [
+      "companionship",
+      "meals"
+    ],
     "availability": "Mon-Fri 07:00-15:00",
     "languages": "English, Korean",
     "has_car": "yes",
-    "why": "I cared for my grandmother for two years and want to do this professionally."
+    "why": "I have not worked in care before, but I am kind and reliable and I would like to learn."
   }
 }
