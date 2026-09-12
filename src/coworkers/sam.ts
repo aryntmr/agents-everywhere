@@ -356,11 +356,10 @@ async function callout(payload: Record<string, unknown>): Promise<void> {
       )
       .sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
     found =
-      mine.find((o) =>
-        text
-          .toLowerCase()
-          .includes((o.title.split("—")[1] ?? "").trim().toLowerCase() || " "),
-      ) ?? mine[0];
+      mine.find((o) => {
+        const hint = (o.title.split("—")[1] ?? "").trim().toLowerCase();
+        return hint !== "" && text.toLowerCase().includes(hint);
+      }) ?? mine[0];
     if (found) {
       sameDay = all;
       break;
@@ -383,18 +382,14 @@ async function callout(payload: Record<string, unknown>): Promise<void> {
       `visit "${visit.title}" has no client_id line`,
       visit.description,
     );
-  const client = await people.get("sam", v.client_id);
+  const client = (await people.all("sam")).find((p) => p.id === v.client_id);
+  if (!client)
+    return needsHuman(`client ${v.client_id} for "${visit.title}" is not in the CRM`);
   const whenTxt = when(visit.start, visit.end);
   const date = localDate(new Date(visit.start));
   const code = `V-${lastName(client)
     .toUpperCase()
     .replace(/[^A-Z]/g, "")}-${date.slice(5).replace("-", "")}`;
-  const existing = loadOffers()[code];
-  if (existing && existing.status !== "covered")
-    return void (await chat.office(
-      "sam",
-      `ℹ️ Sam: already working on ${lastName(client)} ${whenTxt}`,
-    ));
   const why =
     text
       .match(
@@ -677,7 +672,7 @@ async function approveAndFinish(offer: Offer, cand: Candidate): Promise<void> {
     markdown: `Hi ${first},\n\nYou're confirmed for ${offer.clientName} on ${whenTxt}. It's on the calendar. Thank you for stepping in.\n\nSam`,
   });
   const family = offer.familyId
-    ? await people.get("sam", offer.familyId).catch(() => null)
+    ? (await people.all("sam")).find((p) => p.id === offer.familyId) ?? null
     : null;
   if (family?.email) {
     const facts = cand.reason.split(" · ").slice(0, 2).join(" and ");
