@@ -1,0 +1,8 @@
+{
+  "type": "email",
+  "who": "sam",
+  "emailId": "REPLACE with the id from: AMBI_API_TOKEN=$AMBI_KEY_SAM npx ambiguous mail inbox --unread true --json",
+  "to": "sam@freddies-workspace.ambi.cc",
+  "from": "the address Priya replied from",
+  "subject": "Re: Can you cover Arun Patel — Tue Sep 15, 2–6pm? [V-PATEL-0915]"
+}

@@ -1,0 +1,11 @@
+{
+  "type": "handoff",
+  "who": "sam",
+  "from": "ops",
+  "kind": "callout",
+  "payload": {
+    "from": "maria-phone@example.invalid",
+    "subject": "Can't make it Tuesday",
+    "body": "Hi, it's Maria. I'm sick and can't do Mr. Patel's visit on Tuesday 2 to 6. Sorry!"
+  }
+}
