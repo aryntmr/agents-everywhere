@@ -8,6 +8,9 @@ import type { Who } from './types.ts';
 
 export const TZ = 'America/Los_Angeles';
 
+// Event --color must be a hex value; these match the Ambiguous event palette.
+export const COLORS = { red: '#DC2127', green: '#51B749', blue: '#5484ED', gray: '#E1E1E1' } as const;
+
 const IDS_PATH = fileURLToPath(new URL('../config/ids.json', import.meta.url));
 const BIN = fileURLToPath(new URL('../node_modules/.bin/ambiguous', import.meta.url));
 const KEY_ENV: Record<Who, string> = { ops: 'AMBI_KEY_OPS', sam: 'AMBI_KEY_SAM', cara: 'AMBI_KEY_CARA', ravi: 'AMBI_KEY_RAVI' };
@@ -64,7 +67,7 @@ export async function ambi(as: Who, args: string[], body?: Record<string, unknow
 
 export function list<T = any>(res: any): T[] {
   if (Array.isArray(res)) return res;
-  for (const k of ['data', 'items', 'results', 'events', 'contacts', 'tasks']) {
+  for (const k of ['data', 'items', 'results', 'events', 'instances', 'contacts', 'tasks']) {
     if (Array.isArray(res?.[k])) return res[k];
     if (Array.isArray(res?.data?.[k])) return res.data[k];
   }
@@ -226,17 +229,17 @@ export type Occurrence = {
   color?: string;
 };
 
-// Unconfirmed until a live `calendar events list --single-events true` response is inspected:
-// which field names the master event and the original occurrence date.
+// Confirmed live: an expanded occurrence of an unedited series reuses the master's id (master_event_id null);
+// an edited occurrence is a separate exception event with master_event_id set and original_start_at at 00:00Z
+// of the occurrence date.
 function toOccurrence(e: any): Occurrence {
-  const start = e.start_at ?? e.start?.dateTime ?? e.start ?? '';
-  const masterId = e.recurring_event_id ?? e.master_event_id ?? e.recurrence_master_id ?? e.parent_event_id ?? e.series_id ?? e.id;
-  const original = e.original_start_at ?? e.original_start_time ?? e.occurrence_date ?? start;
+  const start = e.start_at ?? '';
+  const masterId = e.master_event_id ?? e.id;
   return {
     id: e.id,
     masterId,
-    occurrenceDate: original ? localDate(new Date(original)) : '',
-    isRecurring: masterId !== e.id || Boolean(e.recurrence_rule ?? e.recurrence),
+    occurrenceDate: e.original_start_at ? String(e.original_start_at).slice(0, 10) : start ? localDate(new Date(start)) : '',
+    isRecurring: masterId !== e.id || Boolean(e.recurrence_rule),
     title: e.title ?? '',
     description: e.description ?? '',
     start,
@@ -271,19 +274,32 @@ export const cal = {
     return list(res).map(toOccurrence);
   },
 
-  /** Edits one day of a repeating visit; falls back to a plain update for a one-off event. */
+  /**
+   * Edits one day of a repeating visit without moving it. Updates the existing exception when that day was
+   * already edited, and falls back to a plain update for a one-off event. Colors must be hex (see COLORS).
+   */
   async editOccurrence(
     as: Who,
     masterId: string,
     occurrenceDate: string,
     fields: { title?: string; description?: string; color?: string; attendees?: string[]; status?: string },
   ): Promise<any> {
-    try {
-      return one(await ambi(as, ['calendar', 'events', 'edit-single', masterId, '--occurrence-date', occurrenceDate, ...toFlags(fields)]));
-    } catch (e) {
-      if (!/recurr|not a repeating|series/i.test((e as Error).message)) throw e;
-      return one(await ambi(as, ['calendar', 'events', 'update', masterId, ...toFlags(fields)]));
+    // Search a window around the date: exceptions carry original_start_at at 00:00Z, which is the prior local day.
+    const res = await ambi(as, ['calendar', 'events', 'list', ...toFlags({
+      start: localISO(atLocal(occurrenceDate, '00:00')), end: localISO(new Date(atLocal(occurrenceDate, '00:00').getTime() + 36 * 3_600_000)),
+      singleEvents: 'true', limit: 200,
+    })]);
+    const hits = list(res).filter((e: any) => e.id === masterId || e.master_event_id === masterId).map((e: any) => ({ e, o: toOccurrence(e) }));
+    const hit = hits.find((h) => h.o.occurrenceDate === occurrenceDate);
+    if (hit && hit.e.id !== masterId) {
+      return one(await ambi(as, ['calendar', 'events', 'update', hit.e.id, ...toFlags(fields)]));
     }
+    if (hit && hit.e.recurrence_rule) {
+      // Without explicit times the API moves the exception to 00:00Z of the occurrence date.
+      return one(await ambi(as, ['calendar', 'events', 'edit-single', masterId, '--occurrence-date', occurrenceDate,
+        ...toFlags({ startAt: hit.e.start_at, endAt: hit.e.end_at, ...fields })]));
+    }
+    return one(await ambi(as, ['calendar', 'events', 'update', masterId, ...toFlags(fields)]));
   },
 
   async create(
