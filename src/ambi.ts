@@ -1,7 +1,6 @@
 // The only way the app talks to Ambiguous: runs the official CLI as a given coworker.
 import 'dotenv/config';
 import { execFile } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import type { Who } from './types.ts';
@@ -74,8 +73,13 @@ export function list<T = any>(res: any): T[] {
   return [];
 }
 
+// Single resources come back as { data: {...} }, bare, or wrapped by type (confirmed live: { task }, { contact }).
+const WRAPPERS = ['task', 'contact', 'deal', 'event', 'email', 'form', 'document', 'calendar', 'channel', 'project', 'activity', 'message'];
 export function one<T = any>(res: any): T {
-  return res?.data && !Array.isArray(res.data) ? res.data : res;
+  const r = res?.data && !Array.isArray(res.data) ? res.data : res;
+  if (!r || typeof r !== 'object' || 'id' in r) return r;
+  for (const k of WRAPPERS) if (r[k] && typeof r[k] === 'object' && !Array.isArray(r[k])) return r[k];
+  return r;
 }
 
 // camelCase keys become --kebab-case flags; arrays are comma-joined, objects JSON-encoded.
@@ -160,11 +164,12 @@ export const mail = {
       if (m.contactId) await crm.note(as, m.contactId, `${ids.agents?.[as]?.display_name?.split(' ')[0] ?? as}: would have emailed ${m.to}: ${m.subject}`);
       return { skipped: true };
     }
-    const idempotencyKey = createHash('sha1').update(`${as}|${m.to}|${m.subject}`).digest('hex');
+    // No idempotency key: a reused key with new content is rejected and identical content is not resent,
+    // which breaks every rehearsal after the first. Callers dedupe by workspace state instead.
     return one(
       await ambi(as, ['mail', 'send', ...toFlags({
         to: m.to, subject: m.subject, bodyMarkdown: m.markdown, inReplyTo: m.inReplyTo,
-        threadId: m.threadId, contactId: m.contactId, idempotencyKey,
+        threadId: m.threadId, contactId: m.contactId,
       })]),
     );
   },

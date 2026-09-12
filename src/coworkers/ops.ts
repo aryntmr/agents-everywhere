@@ -120,6 +120,24 @@ async function updateAvailability(email: Email, person: any, c: Classification) 
   await reply(email, `Hi ${person.firstName || 'there'},\n\nUpdated, thanks. We have you down as: ${availability}.\n\nThe Bayside office`);
 }
 
+// Fallback when no model key is set or the model call fails, so a call-out still reaches Sam.
+function classifyByKeywords(email: Email, person: any): Classification {
+  const text = `${email.subject}\n${email.body}`.toLowerCase();
+  const who = person?.name || email.from;
+  const has = (re: RegExp) => re.test(text);
+  if ((person?.role === 'caregiver' || !person) && has(/can'?t make|cannot make|can't come|call(ing)? out|\bsick\b|won'?t (make|be able)|unable to (make|come|work)|cover my|family emergency/))
+    return { kind: 'callout', summary: `call-out from ${who}`, urgency: 'now' };
+  if (person?.role === 'caregiver' && has(/availability|my hours|days i can|can now work|no longer (work|available)/))
+    return { kind: 'availability_change', summary: `availability change from ${who}`, urgency: 'this_week' };
+  if (has(/next visit|when is .*(visit|coming)|who is coming/))
+    return { kind: 'next_visit_question', summary: `next visit question from ${who}`, urgency: 'today' };
+  if (has(/\bapply\b|application|job|hiring|resume|\bhha\b|\bcna\b/))
+    return { kind: 'application', summary: `job inquiry from ${who}`, urgency: 'this_week' };
+  if (has(/need (some )?care|looking for (a )?(care|caregiver)|home care for|care for my/))
+    return { kind: 'care_request', summary: `care request from ${who}`, urgency: 'today' };
+  return { kind: 'other', summary: `email from ${who}: ${email.subject}`, urgency: 'today' };
+}
+
 async function handleEmail(ev: Extract<Event, { type: 'email' }>) {
   const email = await readEmail(ev);
   const person = email.from ? await people.findByEmail('ops', email.from).catch(() => undefined) : undefined;
@@ -133,6 +151,9 @@ async function handleEmail(ev: Extract<Event, { type: 'email' }>) {
     user: `From: ${email.from}${person ? ` (${person.name}, ${person.role})` : ' (unknown sender)'}\nSubject: ${email.subject}\n\n${email.body}`,
     schema: CLASSIFY_SCHEMA,
     rulebook: true,
+  }).catch((err: any) => {
+    console.log(`[ops] llm classify failed, using keyword rules: ${err?.message}`);
+    return classifyByKeywords(email, person);
   });
 
   const next: Record<Kind, string> = {
