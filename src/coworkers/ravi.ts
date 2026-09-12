@@ -6,6 +6,7 @@ import type { Coworker, Event, Who } from '../types.ts';
 import { TZ, ambi, atLocal, cal, chat, crm, ids, list, localDate, localISO, localWeekday, mail, one, tasks, toFlags } from '../ambi.ts';
 import * as llm from '../llm.ts';
 import * as people from '../people.ts';
+import * as rulebook from '../rulebook.ts';
 
 const AS: Who = 'ravi';
 const SKILLS = ['bathing', 'transfers', 'dementia', 'meals', 'meds', 'companionship', 'driving', 'hoyer', 'mobility', 'overnight'];
@@ -181,6 +182,35 @@ Never reject anyone. Reasons must be 1-3 short facts taken from the application,
 Write exactly three interview questions tailored to what this specific person said — reference their own words, not generic caregiving questions.
 note_for_owner is one plain line.`;
 
+// The Rulebook doc is the policy. If Ambiguous is unreachable we still screen
+// against the same rules rather than dropping the model entirely — a workspace
+// outage must not silently turn Ravi into an if-statement.
+const HIRING_FALLBACK = `## Hiring
+- To move forward, an applicant needs an HHA or CNA certificate that is not expired, or at least one year of paid caregiving experience.
+- Applicants outside San Francisco zips (941xx) or with no availability go on hold, not decline.
+- We never decline a person automatically. Anything that is not a clear yes becomes a task for the owner.
+- Interviews are 30 minutes with the owner within three business days.
+
+## Tone
+- Write like a kind person at a small local office. First names. Short sentences. No jargon.`;
+
+// Each failed fetch costs ~10s against an unhealthy workspace, so remember the
+// failure for a minute instead of stalling every screening.
+let rulebookDownUntil = 0;
+
+async function hiringRules(): Promise<string> {
+  if (Date.now() < rulebookDownUntil) return HIRING_FALLBACK;
+  try {
+    const text = await rulebook.text(AS);
+    if (text.trim()) return text;
+    console.log('[ravi] rulebook doc is empty — using the built-in hiring rules');
+  } catch (err: any) {
+    console.log(`[ravi] rulebook unreachable (${err?.message ?? err}) — using the built-in hiring rules for 60s`);
+  }
+  rulebookDownUntil = Date.now() + 60_000;
+  return HIRING_FALLBACK;
+}
+
 /** Facts checked in code, handed to the model so it cannot contradict them. */
 function precheck(a: Application): { facts: string[]; forced: 'hold' | null } {
   const facts: string[] = [];
@@ -239,7 +269,7 @@ export async function screen(a: Application): Promise<Screening> {
 
   let out: Screening;
   try {
-    out = await llm.askJSON<Screening>(AS, { system: SYSTEM, user, schema: SCHEMA as any, rulebook: true, label: 'screen' });
+    out = await llm.askJSON<Screening>(AS, { system: `Rulebook:\n${await hiringRules()}\n\n${SYSTEM}`, user, schema: SCHEMA as any, label: 'screen' });
   } catch (err: any) {
     console.log(`[ravi] llm unavailable (${err?.message ?? err}) — rules-only screening`);
     return fallbackScreening(a, facts, forced);
