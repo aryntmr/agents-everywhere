@@ -13,6 +13,7 @@ Your deliverables, in priority order:
 4. Seed: pipelines, calendar, channel, project, forms, rulebook, 50 clients, 50 caregivers, a month of visits (by 3:00 PM).
 5. `approvals.ts`, `people.ts`, `rulebook.ts`, `llm.ts`, `server.ts` with routing (by 3:00 PM).
 6. Ops coworker: classify + hand off + #office narration (by 3:15 PM).
+6b. Cara coworker, after the webhooks are live (by 3:30 PM): `plan/lane-1b-cara.md`.
 7. Webhooks live through cloudflared; full integration run (by 3:30 PM).
 8. Reset script, README, video, social post, submission (3:45 – 4:25 PM).
 
@@ -89,6 +90,7 @@ npm i -D tsx typescript @types/node
 - Wrappers listed in section 4.2 of the README. The two that need care:
   - `mail.send(as, {to, subject, markdown, inReplyTo?, threadId?, contactId?})`: enforce the allowlist from `config/ids.json → email_allowlist` (array of address suffixes, e.g. `["+maria@gmail.com", "@yourdomain"]` or the whole plus-base). Non-allowlisted → write a CRM note instead if `contactId` is given, and return `{skipped: true}`. Use `--idempotency-key` = sha1 of `to+subject` so re-runs of a fixture do not double-send.
   - `cal.onDay(as, dateISO)`: `calendar events list --start <00:00 local as RFC3339> --end <23:59:59> --single-events true --limit 200` and parse occurrences; return objects with `{id, masterId, occurrenceDate, title, description, start, end, contactId, color}`. Look at one real response first (`--json`) to learn which field carries the master id for an occurrence; document it in a comment for lanes 2 and 3.
+  - `cal.firstGap(as, userIds, startISO, endISO, minutes)`: call `calendar availability`, return the first free slot on the half-hour between 09:00 and 17:00 local time, skipping weekends. Your Cara and Akshat's Ravi both use it, so push it early.
 - `parseVisit(description)` and `formatVisit({client_id, caregiver_id, status})` helpers for the fixed description lines.
 
 `src/run.ts`: `npm run co -- <who> <fixture.json>` → loads `.env`, imports `src/coworkers/<who>.ts`, calls `handle(JSON.parse(file))`, prints the result, exits non-zero on throw.
@@ -148,7 +150,7 @@ Idempotent: every create is preceded by a find (by name for calendar/channel/pro
 2. `chat channels create --type public --name office`; add all agents (`--member-ids`) if the flag is accepted, otherwise each agent runs `chat channels join <id>` once.
 3. `projects create --name Office --visibility workspace`.
 4. Pipelines: `crm pipelines create --name "Client Onboarding" --stages '[...]'` and `Hiring` with the stage names from the README, in order. Read back with `crm pipelines list --json` to capture stage ids.
-5. Forms (`forms create --is-published true`). Use field ids exactly as below; Akshat codes against them.
+5. Forms (`forms create --is-published true`). Use field ids exactly as below; your Cara and Akshat's Ravi code against them.
    - `request_care`: `family_name` (text), `family_email` (email), `family_phone` (text), `client_name` (text), `client_age` (number), `zip` (text), `needs` (multi-select checkbox from the skills vocabulary), `days_times` (long text), `language` (text), `has_pets` (select yes/no), `smoker` (select yes/no), `gender_pref` (select female/male/no preference), `hours_week` (number), `notes` (long text).
    - `apply`: `name` (text), `email` (email), `phone` (text), `zip` (text), `cert_type` (select HHA/CNA/none), `cert_expires` (date), `years_experience` (number), `skills` (multi-select from the vocabulary), `languages` (text), `availability` (long text), `has_car` (select yes/no), `why` (long text).
    Run `forms create --help` to see the exact `type` values (text, email, number, date, select, checkbox, long text) and the shape of `options`.
@@ -246,7 +248,7 @@ Handles:
 3. Post `📨 Ops: <summary> → <what happens next>` in #office. React 👀 is not available on email; mark the email read with `mail mark <id> --read true`.
 4. Route:
    - `callout` → `handoff('sam', {from:'ops', kind:'callout', payload:{emailId}})`.
-   - `care_request` → `handoff('cara', {from:'ops', kind:'care_request_email', payload:{emailId}})` (Cara treats it like a form with free-text answers; if Akshat has no time for that, Ops instead creates a `Needs a human:` task and replies "thanks, we'll call you today").
+   - `care_request` → `handoff('cara', {from:'ops', kind:'care_request_email', payload:{emailId}})` (Cara treats it like a form with free-text answers; if you have no time for that, Ops instead creates a `Needs a human:` task and replies "thanks, we'll call you today").
    - `application` → `handoff('ravi', {..., kind:'application_email', payload:{emailId}})` (same fallback).
    - `next_visit_question` → find the client from the sender (family contact → `client_id`), `cal.onDay` for the next 7 days filtered by the client's last name in the title, reply by email (`--in-reply-to`) with the next visit day, time, and caregiver first name. Note on the client timeline.
    - `availability_change` → update the caregiver's `availability` custom property with the LLM's rewrite of the new availability (`askJSON` → `{availability: string}`), note on the timeline, reply "updated, thanks", and create a task for the owner if any visit in the next 30 days for that caregiver now falls outside the new availability (`cal.onDay` over the range, filter by name; if too slow, skip this check and only note it).

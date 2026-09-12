@@ -5,7 +5,7 @@ Everything in here is a decision, not a suggestion. If you want to change one, s
 
 Hard deadline: **4:30 PM PDT today**. Code freeze **3:45 PM**. Video recorded by **4:10 PM**.
 
-Lanes: **Adamay = lane 1** (foundation, seed, Ops, README, and getting a model key from the organizers), **Aryan = lane 2** (Sam, the spine; also workspace owner, video, submission), **Akshat = lane 3** (Cara and Ravi).
+Lanes: **Adamay = lane 1** (foundation, seed, Ops, Cara, README, and getting a model key from the organizers), **Aryan = lane 2** (Sam, the spine; also workspace owner, video, submission), **Akshat = lane 3** (Ravi).
 
 ---
 
@@ -19,7 +19,7 @@ We are building that office inside **Ambiguous AI**, a workspace suite (mail, ch
 | --- | --- | --- |
 | **Ops** | Front desk. Reads everything that arrives, decides who handles it, hands it off, keeps the office channel and the daily brief. | Adamay |
 | **Sam** | Scheduler. When a caregiver cancels, finds the best replacements, makes the offers, gets the owner's OK, fixes the calendar, tells the family. | Aryan |
-| **Cara** | Care coordinator. Turns a family's "we need care" request into a client record, a care plan draft, and a booked assessment. | Akshat |
+| **Cara** | Care coordinator. Turns a family's "we need care" request into a client record, a care plan draft, and a booked assessment. | Adamay |
 | **Ravi** | People. Turns a job application into a screened candidate with a booked interview, and keeps caregiver certifications from expiring. | Akshat |
 
 The human owner does exactly one kind of work: clicking **Done** on an approval task when a coworker wants to put a caregiver into a client's home. Everything else runs on its own and is visible in the workspace as it happens.
@@ -42,7 +42,7 @@ This is the target. Every lane exists to make one of these shots real. If someth
 | 0:40 | Sam flips the calendar visit to red NEEDS COVER. A task appears: "Cover Patel, Tue 2–6pm" with three ranked caregivers and a one-line reason each ("Gujarati speaker, did 4 visits with Patel, free Tue afternoons"). Three offer emails go out from Sam's own address. | Aryan |
 | 1:00 | Priya replies YES from her phone. Sam creates "APPROVE: Priya for Patel, Tue 2–6pm" assigned to the owner. Owner clicks Done. | Aryan + Adamay (approval helper) |
 | 1:15 | Calendar visit turns green with Priya's name. The family gets an email. The other two get "filled, thank you". Both CRM cards get a note. The cover task closes itself. | Aryan |
-| 1:30 | Cut: a family fills the public "Request care" form. Cara creates the client, drafts a care plan doc, books an assessment on the owner's calendar, emails the family. Pipeline card moves to "Assessment booked". | Akshat |
+| 1:30 | Cut: a family fills the public "Request care" form. Cara creates the client, drafts a care plan doc, books an assessment on the owner's calendar, emails the family. Pipeline card moves to "Assessment booked". | Adamay |
 | 1:42 | Cut: someone fills the public "Apply to work here" form. Ravi screens it, books an interview, emails them. Pipeline card moves to "Interview booked". | Akshat |
 | 1:52 | Audit log filtered to the last 10 minutes: Ops, Sam, Cara, Ravi by name, dozens of actions. Closing card. | Adamay |
 
@@ -122,7 +122,7 @@ Keep it to one line. This channel is what the owner watches, and it is what the 
 
 ### 3.7 Forms (public links, no account needed)
 
-- `Request care` (Cara's front door) and `Apply to work with us` (Ravi's front door). Fields are listed in lane 3. Adamay creates them in seed and puts their ids in `config/ids.json`.
+- `Request care` (Cara's front door) and `Apply to work with us` (Ravi's front door). Fields are listed in lane 1 step 4. Adamay creates them in seed and puts their ids in `config/ids.json`.
 
 ### 3.8 Mail
 
@@ -154,7 +154,7 @@ agents-everywhere/
     coworkers/
       ops.ts                   owner: Adamay
       sam.ts                   owner: Aryan
-      cara.ts                  owner: Akshat
+      cara.ts                  owner: Adamay
       ravi.ts                  owner: Akshat
   plan/                        these docs
   README.md                    owner: Adamay (written at 3:45 PM; each person sends 3 lines about what they built)
@@ -229,12 +229,12 @@ If a wrapper you need is missing, call `ambi(...)` directly with the catalog's e
 
 ## 6. Timeline (PDT)
 
-| When | Adamay (foundation + Ops) | Aryan (Sam) | Akshat (Cara + Ravi) |
+| When | Adamay (foundation + Ops + Cara) | Aryan (Sam) | Akshat (Ravi) |
 | --- | --- | --- | --- |
-| **now – 2:00** | Read docs. Ask the organizers for an OpenRouter/OpenAI API key (lane 1 step 0) and keep asking until it lands. Provision the 4 coworkers, collect keys. Push skeleton: package.json, types.ts, ambi.ts, run.ts, config/ids.json (partial). Start the 20-minute verification list (section 8). | Read docs. Run `npx ambiguous@latest catalog calendar`, `catalog mail`, `catalog crm`, `catalog tasks`. Write `fixtures/sam/*.json`. Draft Sam's ranking prompt. | Read docs. Run `catalog forms`, `catalog crm`, `catalog docs`, `catalog calendar`. Write `fixtures/cara/*.json`, `fixtures/ravi/*.json`. Draft the two forms' field lists. |
-| **2:00 – 2:20** | Post keys + partial ids in chat. Freeze types.ts. Seed: pipelines, calendar, channel, project, forms, rulebook doc. | Implement Sam steps 1–4 (read call-out, find the visit, flip it). | Implement Cara steps 1–4 (contact, deal, care plan doc). |
-| **2:20 – 3:00** | Seed 50 + 50 contacts and the month of visits. Post full `config/ids.json`. Write approvals.ts, people.ts, rulebook.ts, server.ts routing, Ops classify + handoff. | Sam steps 5–8 (candidates, rank, task, offers). | Cara steps 5–8 (assessment, email, stage, note). Ravi steps 1–5 (contact, deal, screen, interview, email). |
-| **3:00 – 3:30** | Cloudflared tunnel, register webhooks, live end-to-end: real email to ops@ → Sam offers. Morning brief. Reset script. | Sam steps 9–12 (YES reply, approval, updates, notifications). | Ravi step 6 (certification sweep). Then polish emails and notes. |
+| **now – 2:00** | Read docs. Ask the organizers for an OpenRouter/OpenAI API key (lane 1 step 0) and keep asking until it lands. Provision the 4 coworkers, collect keys. Push skeleton: package.json, types.ts, ambi.ts, run.ts, config/ids.json (partial). Start the 20-minute verification list (section 8). | Read docs. Run `npx ambiguous@latest catalog calendar`, `catalog mail`, `catalog crm`, `catalog tasks`. Write `fixtures/sam/*.json`. Draft Sam's ranking prompt. | Read docs. Run `catalog forms`, `catalog crm`, `catalog docs`, `catalog calendar`. Write `fixtures/ravi/*.json`. Draft Ravi's screening prompt. |
+| **2:00 – 2:20** | Post keys + partial ids in chat. Freeze types.ts. Seed: pipelines, calendar, channel, project, forms, rulebook doc. | Implement Sam steps 1–4 (read call-out, find the visit, flip it). | Ravi steps 1–2 (applicant contact, deal, screening). |
+| **2:20 – 3:00** | Seed 50 + 50 contacts and the month of visits. Post full `config/ids.json`. Write approvals.ts, people.ts, rulebook.ts, server.ts routing, Ops classify + handoff. | Sam steps 5–8 (candidates, rank, task, offers). | Ravi steps 3–5 (interview, hold, owner review). |
+| **3:00 – 3:30** | Cloudflared tunnel, register webhooks, live end-to-end: real email to ops@ → Sam offers. Then Cara steps 1–6 (`plan/lane-1b-cara.md`). Reset script. Morning brief only if time. | Sam steps 9–12 (YES reply, approval, updates, notifications). | Ravi step 6 (certification sweep). Then test Cara's request-care form for Adamay and polish emails. |
 | **3:30 – 3:45** | Integration run twice from a clean reset. Fix what breaks, in priority order (section 7). | Same | Same |
 | **3:45** | **Code freeze.** Adamay writes README from everyone's 3 lines and drafts the social post. | Aryan drives the video (owner screen, clicks the approval). Adamay plays "Priya" on a phone. | Akshat plays the family and the applicant on a phone. |
 | **3:45 – 4:10** | Record the video in one take (two if needed): Aryan's screen shows the Ambiguous UI, phones on camera for the replies. | | |
